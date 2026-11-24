@@ -4,6 +4,17 @@ import Testing
 
 @MainActor
 struct PersistenceFailureTests {
+    @Test func usernameValidationPreservesExistingAcceptanceRules() {
+        let boundaryCases = ["", "a", "A_0.z", String(repeating: "a", count: 30),
+                             String(repeating: "a", count: 31), "a/b", "@apple",
+                             "a\n", "a\r\n", "é", "😀", "a b", "a\u{2028}"]
+        let byteCases = (0...127).compactMap { UnicodeScalar($0).map { "a" + String($0) } }
+        for value in boundaryCases + byteCases {
+            let previous = value.range(of: "^[a-zA-Z0-9._]{1,30}$", options: .regularExpression) != nil
+            #expect(UsernameRules.valid(value) == previous, "Changed acceptance for \(value.debugDescription)")
+        }
+    }
+
     @Test(arguments: [-1, Int.min, Int.max])
     func unsafeCursorsAreRejected(_ cursor: Int) throws {
         var state = SavedSnapshot.empty
