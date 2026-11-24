@@ -46,6 +46,7 @@ struct PeelTabs: View {
 
     @StateObject private var demoModel = PeelModel(demo: true)
     @StateObject private var demoMode = PeelDemoMode()
+    @State private var sampleTransferFailed = false
     @State private var importRequest: DocumentImportKind?
     @State private var selection: PeelTab = .review
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -71,6 +72,59 @@ struct PeelTabs: View {
         .id(demoMode.isEnabled ? "demo" : "live")
         .documentImporter(request: $importRequest, model: model)
         .operationFeedback(model: model, startupOnly: true, chooseRestore: { importRequest = .backup })
+        .alert("Demo Mode", isPresented: Binding(
+            get: { demoModel.demoRestrictionRequested },
+            set: { presented in
+                // UIKit may dismiss during a SwiftUI update; publish on the next actor turn.
+                Task { @MainActor in demoModel.demoRestrictionRequested = presented }
+            }
+        )) {
+            Button("Exit Demo Mode") {
+                DispatchQueue.main.async { demoMode.exitRequested = true }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("To use this functionality, please exit Demo Mode first.")
+        }
+        .alert("Exit Demo Mode?", isPresented: Binding(
+            get: { demoMode.exitRequested },
+            set: { presented in
+                Task { @MainActor in demoMode.exitRequested = presented }
+            }
+        )) {
+            if demoModel.hasImportedSample && model.canReceiveSampleLists && demoModel.canEditLists && demoModel.failure == nil {
+                Button("Keep Sample Lists") {
+                    DispatchQueue.main.async {
+                        do {
+                            try model.retainSampleLists(from: demoModel)
+                            demoMode.exit()
+                        } catch {
+                            sampleTransferFailed = true
+                        }
+                    }
+                }
+            }
+            Button("Exit Without Sample Lists") {
+                DispatchQueue.main.async {
+                    demoModel.cancelOperation()
+                    demoMode.exit()
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            if demoModel.hasImportedSample && !model.canReceiveSampleLists {
+                Text("Your personal lists and review progress will remain unchanged. To keep sample lists, first exit Demo Mode, save a backup and reset your lists, then import the sample again in Demo Mode.")
+            } else if demoModel.hasImportedSample {
+                Text("Keep the imported sample lists and their review progress in your normal workspace? Live profile browsing requires internet access and your own login confirmation. Sample relationships are fictional.")
+            } else {
+                Text("Your personal lists and review progress will remain unchanged. Import the sample archive in Demo Mode to keep its lists when exiting.")
+            }
+        }
+        .alert("Could Not Keep Sample Lists", isPresented: $sampleTransferFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your saved data and Demo Mode lists remain unchanged. Please try again after checking your available storage.")
+        }
         .tint(orange)
     }
 

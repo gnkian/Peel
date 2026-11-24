@@ -129,16 +129,75 @@ final class PeelUITests: XCTestCase {
         sample.tap()
         select("Mutual")
         XCTAssertTrue(app.staticTexts["0 of 15 reviewed"].waitForExistence(timeout: 10))
+        capture("Bundled company icons", app: app)
         let search = app.textFields["Search usernames"]
         search.tap()
         search.typeText("apple")
         XCTAssertTrue(app.staticTexts["@apple"].waitForExistence(timeout: 5))
         select("Review")
         app.buttons["Exit Demo"].tap()
+        app.alerts["Exit Demo Mode?"].buttons["Exit Without Sample Lists"].tap()
         select("Menu")
         XCTAssertFalse(app.buttons["importSampleArchive"].exists)
         select("Mutual")
         XCTAssertTrue(app.staticTexts["Your accounts will appear here after comparing lists."].exists)
+    }
+
+    func testSampleRetentionAndRestrictedActionAlerts() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        app.launch()
+        func select(_ title: String) {
+            let tab = app.tabBars.buttons[title]
+            (tab.exists ? tab : app.buttons[title].firstMatch).tap()
+        }
+        XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
+        app.buttons["demoLogo"].press(forDuration: 5.2)
+        app.buttons["importLists"].tap()
+        let restricted = app.alerts["Demo Mode"]
+        XCTAssertTrue(restricted.waitForExistence(timeout: 5))
+        XCTAssertTrue(restricted.staticTexts["To use this functionality, please exit Demo Mode first."].exists)
+        restricted.buttons["Cancel"].tap()
+        XCTAssertTrue(app.buttons["Exit Demo"].exists)
+        select("Menu")
+        app.buttons["Restore Progress"].tap()
+        XCTAssertTrue(restricted.waitForExistence(timeout: 5))
+        restricted.buttons["Cancel"].tap()
+        app.buttons["importSampleArchive"].tap()
+        select("Mutual")
+        XCTAssertTrue(app.staticTexts["0 of 15 reviewed"].waitForExistence(timeout: 10))
+        app.buttons["Start Review"].tap()
+        XCTAssertTrue(restricted.waitForExistence(timeout: 5))
+        restricted.buttons["Exit Demo Mode"].tap()
+        let exit = app.alerts["Exit Demo Mode?"]
+        XCTAssertTrue(exit.waitForExistence(timeout: 5))
+        exit.buttons["Cancel"].tap()
+        select("Review")
+        XCTAssertTrue(app.buttons["Exit Demo"].exists)
+        app.buttons["Exit Demo"].tap()
+        XCTAssertTrue(exit.waitForExistence(timeout: 5))
+        exit.buttons["Keep Sample Lists"].tap()
+        XCTAssertTrue(app.buttons["Login to Instagram"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Exit Demo"].exists)
+        XCTAssertTrue(app.staticTexts["20"].firstMatch.waitForExistence(timeout: 5))
+        select("Mutual")
+        XCTAssertTrue(app.staticTexts["Your accounts will appear here after comparing lists."].exists)
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.staticTexts["20"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["demoLogo"].press(forDuration: 5.2)
+        select("Menu")
+        app.buttons["importSampleArchive"].tap()
+        select("Mutual")
+        XCTAssertTrue(app.staticTexts["0 of 15 reviewed"].waitForExistence(timeout: 10))
+        select("Review")
+        app.buttons["Exit Demo"].tap()
+        XCTAssertTrue(exit.waitForExistence(timeout: 5))
+        XCTAssertFalse(exit.buttons["Keep Sample Lists"].exists)
+        exit.buttons["Exit Without Sample Lists"].tap()
+        XCTAssertTrue(app.staticTexts["20"].firstMatch.waitForExistence(timeout: 5))
     }
 
     func testDocumentPickerCancellationAndRepeat() {

@@ -1,6 +1,8 @@
 import SwiftUI
 
 @MainActor final class PeelModel: ObservableObject {
+    @Published var demoRestrictionRequested = false
+    @Published private(set) var hasImportedSample = false
     let isDemo: Bool
     @Published var queue = QueueState() { didSet { persist() } }
     @Published var followingNames: [String] = []
@@ -187,6 +189,7 @@ import SwiftUI
                     if case .restore = operation { return true }
                     return false
                 }())
+                if self.isDemo, case .zip = operation { self.hasImportedSample = true }
                 self.operationState = .completed
                 self.operationID = nil
                 self.operationTask = nil
@@ -245,7 +248,7 @@ import SwiftUI
         return browserUsers.filter { done.contains($0) }.count
     }
     func startBrowser(mode: ReviewMode, at user: String? = nil) {
-        guard !isDemo, canEditLists else { return }
+        guard requireLiveMode(), canEditLists else { return }
         browserMode = mode
         switch mode {
         case .unfollow: browserUsers = queue.users
@@ -271,7 +274,7 @@ import SwiftUI
         guard canEditLists else { return }
         if excluded.contains(user) { excluded.remove(user) } else { excluded.insert(user) }
     }
-    func openInBrowser(_ user: String) { guard !isDemo else { return }; startBrowser(mode: .unfollow, at: user) }
+    func openInBrowser(_ user: String) { guard requireLiveMode() else { return }; startBrowser(mode: .unfollow, at: user) }
     func previousInBrowser() {
         guard canEditLists else { return }
         guard browserIndex > 0, browserHistory.indices.contains(browserIndex - 1) else { return }
@@ -353,6 +356,7 @@ import SwiftUI
         isRestoring = false
         do {
             try commit(.empty, recovering: true)
+            hasImportedSample = false
             browserUsers = []
             browserHistory = []
             browserIndex = 0
@@ -366,6 +370,39 @@ import SwiftUI
     func importZIP(_ url: URL) -> Task<Void, Never> {
         guard !isDemo else { return Task {} }
         return importArchive(url, current: snapshot)
+    }
+
+    /// Restricted actions explain how to leave Demo Mode without starting network work.
+    func requireLiveMode() -> Bool {
+        guard isDemo else { return true }
+        demoRestrictionRequested = true
+        return false
+    }
+
+    /// An empty workspace is required, even after confirmation, so personal data is never replaced.
+    var canReceiveSampleLists: Bool {
+        guard !isDemo, canEditLists, !savingBlocked, pendingSave == nil else { return false }
+        let state = snapshot
+        return state.queue.users.isEmpty && state.queue.done.isEmpty && state.queue.mode == "none"
+            && state.queue.lastOpened == nil && state.queue.cursor == 0
+            && state.queue.following == nil && state.queue.followers == nil
+            && state.preferences.following.isEmpty && state.preferences.followers.isEmpty
+            && state.preferences.excluded.isEmpty && state.preferences.nonMutualReviewed.isEmpty
+            && (state.preferences.mutualReviewed ?? []).isEmpty
+    }
+
+    func retainSampleLists(from demo: PeelModel) throws {
+        guard canReceiveSampleLists, demo.isDemo, demo.hasImportedSample, demo.canEditLists,
+              demo.failure == nil else { throw PeelError.invalidBackup }
+        // Commit validates and saves before publishing; a failed write leaves both models intact.
+        try commit(demo.snapshot)
+        failure = nil
+        operationState = .completed
+        instagramUser = nil
+        browserUsers = []
+        browserHistory = []
+        browserIndex = 0
+        // The demo login flag is intentionally not copied. Live login remains user-confirmed.
     }
 
     /// Only the isolated demo model can import the bundled fictional archive.

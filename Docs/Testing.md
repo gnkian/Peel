@@ -65,3 +65,11 @@ After a non-erasing restart of Xcode and the affected simulator, the focused che
 Physical iPhone/iPad, iOS 17, full VoiceOver/Dynamic Type/contrast coverage, live Split View/Stage Manager resizing, real share-extension consumers, low-storage/process interruption and memory/performance stress remain incompletely verified. Genuine Instagram login/2FA/challenges/logout, current exports, avatars, offline recovery and observed throttling need authorized manual testing. Fixture success cannot establish live-service compatibility or authorization.
 
 See [release requirements](Release-Readiness.md) for the manual verification matrix. No additional tests are implied by the current documentation or release status.
+
+### Demo Mode evaluation
+
+Demo Mode uses bundled company icons without avatar network requests. After importing the sample archive, blocked live actions show an exit alert. Cancel leaves Demo Mode and personal data intact. Exit Without Sample Lists returns to the existing workspace. Keep Sample Lists is available only for an empty normal workspace and persists the imported sample lists and review progress after confirmation. Existing or unreadable saved data must never be replaced. A failed save must leave Demo Mode active with both workspaces unchanged.
+
+After keeping sample lists, confirm your own Instagram login and check profile browsing on a physical device with internet access. Demo login confirmation must not transfer. Sample relationships are fictional; Peel does not automatically follow or unfollow accounts.
+
+Focused simulator verification on 25 November 2026: 44 unit tests passed across sample archives, avatar failures, import races and persistence failures. Both updated sample-exit UI flows passed, including cancellation, retention, relaunch and existing-data protection, with no SwiftUI state-update warnings. Bundled Apple and Google icons were also checked in a captured screenshot. Live Instagram browsing still requires a physical-device check.

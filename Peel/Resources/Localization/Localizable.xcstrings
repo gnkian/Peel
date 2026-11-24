@@ -167,7 +167,13 @@
     "Continue" : {
 
     },
+    "Could Not Keep Sample Lists" : {
+
+    },
     "Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected." : {
+
+    },
+    "Demo Mode" : {
 
     },
     "DEMO MODE · Fictional data" : {
@@ -192,6 +198,15 @@
 
     },
     "Exit Demo" : {
+
+    },
+    "Exit Demo Mode" : {
+
+    },
+    "Exit Demo Mode?" : {
+
+    },
+    "Exit Without Sample Lists" : {
 
     },
     "Export JSON Backup" : {
@@ -294,6 +309,12 @@
     "JSON backups contain imported usernames, exclusions, and review progress. Sharing sends the file to the destination you choose. Keep backups private. Reset Lists does not delete copies you have already shared." : {
 
     },
+    "Keep Sample Lists" : {
+
+    },
+    "Keep the imported sample lists and their review progress in your normal workspace? Live profile browsing requires internet access and your own login confirmation. Sample relationships are fictional." : {
+
+    },
     "Last reviewed  @%@" : {
 
     },
@@ -358,6 +379,9 @@
 
     },
     "Not a Peel progress file." : {
+
+    },
+    "OK" : {
 
     },
     "Once your export is ready, download the ZIP and import it in Peel." : {
@@ -550,6 +574,9 @@
     "This ZIP is damaged, incomplete, encrypted, or uses unsupported compression. Download a new JSON or HTML export." : {
 
     },
+    "To use this functionality, please exit Demo Mode first." : {
+
+    },
     "Toggle Demo Mode" : {
 
     },
@@ -595,10 +622,19 @@
     "Your Peel backup" : {
 
     },
+    "Your personal lists and review progress will remain unchanged. Import the sample archive in Demo Mode to keep its lists when exiting." : {
+
+    },
+    "Your personal lists and review progress will remain unchanged. To keep sample lists, first exit Demo Mode, save a backup and reset your lists, then import the sample again in Demo Mode." : {
+
+    },
     "Your review" : {
 
     },
     "Your review progress and queue" : {
+
+    },
+    "Your saved data and Demo Mode lists remain unchanged. Please try again after checking your available storage." : {
 
     },
     "Z–A" : {

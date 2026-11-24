@@ -180,7 +180,13 @@ The bundled archive contains 50 sample accounts with fictional relationships and
 
 Demo Mode is designed to keep sample data separate from personal review data.
 
-Select **Exit Demo** to return to the normal application.
+Company icons are bundled for offline display; they are illustrative logos, not live Instagram profile photos.
+
+Select **Exit Demo** to return to the normal application. After importing the sample archive, choose **Keep Sample Lists** to retain the sample relationships and Demo Mode review progress in an empty normal workspace. **Cancel** keeps Demo Mode active; **Exit Without Sample Lists** leaves personal data unchanged.
+
+Peel never replaces existing personal lists or progress with sample data. To use sample lists in the normal workspace, first save a backup and reset your personal lists, then import the sample archive in Demo Mode and keep it when exiting.
+
+Outside Demo Mode, confirm your own Instagram login to browse the sample accounts and use the normal manual review workflow. Live browsing and profile photos require network access. Sample relationships remain fictional and do not describe your Instagram account.
 
 ## Technologies
 
@@ -224,6 +230,8 @@ Local processing does not mean the entire application operates offline. Website 
 - [Release readiness](Docs/Release-Readiness.md)
 
 ## License
+
+Bundled Demo Mode company icons are from [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0; versions 13.21.0 and 11.15.0), with a white background added for readability. Brand marks belong to their respective owners; their inclusion does not imply endorsement.
 
 [MIT License](LICENSE)
 

@@ -21,13 +21,12 @@ struct PeelMenuView: View {
                         .accessibilityIdentifier("importSampleArchive")
                     }
                     Button { showExportGuide = true } label: { Label("Save Progress", systemImage: "square.and.arrow.up") }
-                    Button { importRequest = .backup } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
-                        .disabled(model.isDemo)
+                    Button { if model.requireLiveMode() { importRequest = .backup } } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
                     Button(role: .destructive) { showClear = true } label: { Label("Reset Lists", systemImage: "trash") }
-                    Button(role: .destructive) { showLogoutConfirmation = true } label: {
+                    Button(role: .destructive) { if model.requireLiveMode() { showLogoutConfirmation = true } } label: {
                         Label(loggingOut ? LocalizedStringResource("Signing out…") : LocalizedStringResource("Log Out of Instagram"), systemImage: "rectangle.portrait.and.arrow.right")
                     }
-                    .disabled(loggingOut || model.isDemo)
+                    .disabled(loggingOut)
                 }
                 Section("Information") {
                     NavigationLink { HowPeelWorksView() } label: {

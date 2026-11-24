@@ -41,6 +41,8 @@ struct SampleArchiveTests {
         for username in names {
             // Exercise the same loading and retry entry points used by the avatar view.
             let avatar = InstagramAvatar(username: username, allowsNetwork: !demo.isDemo, store: store)
+            #expect(avatar.bundledImage != nil, "Missing bundled icon for \(username)")
+            #expect(InstagramAvatar(username: username, allowsNetwork: true, store: store).bundledImage == nil)
             await avatar.load()
             await avatar.retry()
         }
@@ -77,4 +79,159 @@ struct SampleArchiveTests {
         #expect(real.queue.users == ["peel_fixture_a", "peel_fixture_b"])
         #expect(real.followingNames == ["peel_fixture_a", "peel_fixture_b", "peel_fixture_mutual"])
     }
+    @Test func keepingSamplePersistsProgressWithoutCopyingDemoLoginAndEnablesLiveReview() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let live = try await fixture.restoredModel()
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        await demo.importSampleArchive().value
+        let user = try #require(demo.queue.users.first)
+        demo.markReviewed(user, mode: .unfollow)
+        demo.toggleExclude(user)
+        let mutual = try #require(demo.mutualUsers.first)
+        demo.markReviewed(mutual, mode: .mutual)
+        try live.retainSampleLists(from: demo)
+        #expect(!live.isDemo)
+        #expect(!live.instagramLoginConfirmed)
+        #expect(live.queue.users.count == 20)
+        #expect(live.doneSet.contains(user))
+        #expect(live.excluded.contains(user))
+        #expect(live.mutualReviewed.contains(mutual))
+        let restored = try await fixture.restoredModel()
+        #expect(restored.mutualUsers.count == 15)
+        #expect(restored.doneSet.contains(user))
+        #expect(restored.excluded.contains(user))
+        #expect(!restored.instagramLoginConfirmed)
+        live.instagramLoginConfirmed = true
+        live.startBrowser(mode: .mutual, at: mutual)
+        #expect(live.instagramUser == mutual)
+        #expect(live.browserUsers.count == 15)
+        #expect(!live.demoRestrictionRequested)
+    }
+
+    @Test func keepingSampleNeverReplacesPersonalListsOrProgress() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let live = try await fixture.restoredModel()
+        live.excluded = ["personal"]
+        let before = fixture.defaults.data(forKey: DefaultsProgressStore.checkpointKey)
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        await demo.importSampleArchive().value
+        #expect(!live.canReceiveSampleLists)
+        #expect(throws: PeelError.invalidBackup) { try live.retainSampleLists(from: demo) }
+        #expect(live.excluded == ["personal"])
+        #expect(live.followingNames.isEmpty)
+        #expect(fixture.defaults.data(forKey: DefaultsProgressStore.checkpointKey) == before)
+    }
+
+    @Test func failedSampleSaveLeavesBothWorkspacesIntactAndCanBeRetried() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let store = MockProgressStore()
+        let live = PeelModel(defaults: fixture.defaults, progressStore: store)
+        await live.reloadSavedData().value
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        await demo.importSampleArchive().value
+        store.failWrites = true
+        #expect(throws: PeelError.persistence) { try live.retainSampleLists(from: demo) }
+        #expect(live.queue.users.isEmpty)
+        #expect(live.followingNames.isEmpty)
+        #expect(store.bytes.2 == nil)
+        #expect(demo.queue.users.count == 20)
+        #expect(live.canReceiveSampleLists)
+        store.failWrites = false
+        try live.retainSampleLists(from: demo)
+        #expect(live.queue.users.count == 20)
+        #expect(store.writes == 1)
+    }
+
+    @Test func onlyCompletedSampleImportsCanBeKeptAndResetClearsEligibility() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let live = try await fixture.restoredModel()
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        #expect(throws: PeelError.invalidBackup) { try live.retainSampleLists(from: demo) }
+        await demo.importSampleArchive().value
+        #expect(demo.hasImportedSample)
+        demo.resetLists()
+        #expect(!demo.hasImportedSample)
+        #expect(throws: PeelError.invalidBackup) { try live.retainSampleLists(from: demo) }
+        #expect(throws: PeelError.invalidBackup) { try live.retainSampleLists(from: live) }
+    }
+
+    @Test func restoringOrCorruptPersonalWorkspaceCannotReceiveSample() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        fixture.defaults.set(Data("{broken".utf8), forKey: DefaultsProgressStore.queueKey)
+        let live = PeelModel(defaults: fixture.defaults)
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        #expect(!live.canReceiveSampleLists)
+        await demo.importSampleArchive().value
+        await live.reloadSavedData().value
+        #expect(!live.canReceiveSampleLists)
+        #expect(throws: PeelError.invalidBackup) { try live.retainSampleLists(from: demo) }
+        #expect(fixture.defaults.data(forKey: DefaultsProgressStore.queueKey) == Data("{broken".utf8))
+    }
+
+    @Test func restrictedActionsAndCancelledExitLeaveDemoAndPersonalDataIntact() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let live = try await fixture.restoredModel()
+        let before = fixture.defaults.data(forKey: DefaultsProgressStore.checkpointKey)
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        let mode = PeelDemoMode()
+        mode.toggle()
+        demo.startBrowser(mode: .mutual)
+        #expect(demo.demoRestrictionRequested)
+        #expect(demo.instagramUser == nil)
+        mode.toggle()
+        #expect(mode.exitRequested)
+        #expect(mode.isEnabled)
+        mode.exitRequested = false // Native Cancel dismisses only the request.
+        #expect(mode.isEnabled)
+        #expect(live.followingNames.isEmpty)
+        #expect(fixture.defaults.data(forKey: DefaultsProgressStore.checkpointKey) == before)
+        mode.exit()
+        #expect(!mode.isEnabled)
+    }
+
+    @Test(arguments: [true, false])
+    func transferRejectsActiveImportsInEitherWorkspace(demoIsImporting: Bool) async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let importer = ControlledImporter()
+        let live = PeelModel(defaults: fixture.defaults, importer: importer)
+        await live.reloadSavedData().value
+        let demo = PeelModel(demo: true, defaults: fixture.defaults,
+                             importer: demoIsImporting ? importer : ImportService())
+        if demoIsImporting {
+            let first = demo.importSampleArchive()
+            let deadline = ContinuousClock.now.advanced(by: .seconds(3))
+            while await importer.count < 1, ContinuousClock.now < deadline {
+                try await Task.sleep(for: .milliseconds(5))
+            }
+            try #require(await importer.count == 1)
+            await importer.finish(0, following: ["apple"])
+            await first.value
+        } else {
+            await demo.importSampleArchive().value
+        }
+        try #require(demo.hasImportedSample)
+        let task = demoIsImporting ? demo.importSampleArchive()
+            : live.importZIP(URL(fileURLWithPath: "/pending.zip"))
+        #expect(throws: PeelError.invalidBackup) { try live.retainSampleLists(from: demo) }
+        #expect(live.followingNames.isEmpty)
+        #expect(fixture.defaults.data(forKey: DefaultsProgressStore.checkpointKey) == nil)
+        let expectedCount = demoIsImporting ? 2 : 1
+        let deadline = ContinuousClock.now.advanced(by: .seconds(3))
+        while await importer.count < expectedCount, ContinuousClock.now < deadline {
+            try await Task.sleep(for: .milliseconds(5))
+        }
+        try #require(await importer.count == expectedCount)
+        if demoIsImporting { demo.cancelOperation() } else { live.cancelOperation() }
+        await importer.finish(expectedCount - 1, following: ["stale"])
+        await task.value
+        #expect(live.followingNames.isEmpty)
+    }
+
 }

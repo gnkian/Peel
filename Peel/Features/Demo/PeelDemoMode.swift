@@ -1,7 +1,17 @@
 import SwiftUI
 
-// Demo data is generated locally, never loaded from a real Instagram account.
+// Demo data stays isolated unless the user explicitly keeps an imported sample.
 @MainActor final class PeelDemoMode: ObservableObject {
     @Published var isEnabled = false
-    func toggle() { isEnabled.toggle() }
+    @Published var exitRequested = false
+
+    func toggle() {
+        if isEnabled { exitRequested = true }
+        else { isEnabled = true }
+    }
+
+    func exit() {
+        exitRequested = false
+        isEnabled = false
+    }
 }

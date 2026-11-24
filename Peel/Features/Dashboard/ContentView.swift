@@ -64,15 +64,15 @@ struct ContentView: View {
                     }
 
                     LazyVGrid(columns: dynamicTypeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
-                        Button { showingExportGuide = true } label: {
+                        Button { if model.requireLiveMode() { showingExportGuide = true } } label: {
                             instagramActionTile("Get your Lists", subtitle: "Open Instagram’s Export page", icon: "arrow.down.doc")
                         }
-                        .disabled(!model.instagramLoginConfirmed || model.isDemo)
-                        Button { importRequest = .archive } label: {
+                        .disabled(!model.instagramLoginConfirmed)
+                        Button { if model.requireLiveMode() { importRequest = .archive } } label: {
                             instagramActionTile("Import Lists", subtitle: "Exported ZIP File", icon: "doc.zipper")
                         }
                         .accessibilityIdentifier("importLists")
-                        .disabled(!model.instagramLoginConfirmed || model.isDemo)
+                        .disabled(!model.instagramLoginConfirmed)
                     }
                     .buttonStyle(.plain)
 
