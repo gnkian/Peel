@@ -1,0 +1,56 @@
+# macOS and editor-local state
+.DS_Store
+._*
+.AppleDouble/
+.LSOverride
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Xcode user state; keep project/workspace files and shared schemes
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Generated builds, diagnostics and distribution products
+DerivedData/
+build/
+.build/
+*.app/
+*.dSYM/
+*.dSYM.zip
+*.xcresult
+*.xcarchive/
+*.ipa
+*.profraw
+*.profdata
+*.log
+.swiftpm/xcode/xcuserdata/
+
+# Local credentials and signing material
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.p8
+*.pem
+*.mobileprovision
+*.provisionprofile
+*.key
+.ssh/
+AuthKey_*
+
+# Personal exports/backups; retain synthetic test ZIPs
+*.zip
+!PeelTests/Fixtures/*.zip
+peel-progress*.json
+follow-manager-backup*.json
+PrivateData/
+PersonalExports/
+
+# Originals stay on disk; publish only audited documentation copies
+/Screenshots/

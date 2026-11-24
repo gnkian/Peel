@@ -1,0 +1,609 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ @%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ @%2$@"
+          }
+        }
+      }
+    },
+    "%lld accounts shown" : {
+      "comment" : "Number of accounts matching the current search and filter.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "machine_translated",
+                  "value" : "%lld account shown"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "machine_translated",
+                  "value" : "%lld accounts shown"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "machine_translated",
+                  "value" : "%lld accounts shown"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld left" : {
+
+    },
+    "%lld of %lld accounts reviewed" : {
+      "comment" : "First count is reviewed accounts; second count is total accounts.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "%1$lld of %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "machine_translated",
+                      "value" : "%arg account reviewed"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "machine_translated",
+                      "value" : "%arg accounts reviewed"
+                    }
+                  },
+                  "zero" : {
+                    "stringUnit" : {
+                      "state" : "machine_translated",
+                      "value" : "%arg accounts reviewed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld of %lld reviewed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld reviewed"
+          }
+        }
+      }
+    },
+    "%lld remaining" : {
+
+    },
+    "%lld%% completed" : {
+
+    },
+    "1 · Sign in to Instagram" : {
+
+    },
+    "2 · Request and import your data" : {
+
+    },
+    "3 · Compare and review" : {
+
+    },
+    "4 · Review manually" : {
+
+    },
+    "A temporary backup could not be removed from Peel’s temporary storage. Retry cleanup. Your saved progress has not been changed." : {
+
+    },
+    "A–Z" : {
+
+    },
+    "About" : {
+
+    },
+    "Accounts that don't follow you back" : {
+
+    },
+    "Accounts you exclude from Mass Unfollow will appear here." : {
+
+    },
+    "Accounts you follow each other" : {
+
+    },
+    "Actions for @%@" : {
+
+    },
+    "All" : {
+
+    },
+    "Avatar requests" : {
+
+    },
+    "Backups and sharing" : {
+
+    },
+    "By Ian Gnk" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Choose Another File" : {
+
+    },
+    "Clears Instagram and related Meta website sessions in Peel. Imported lists and review progress remain saved." : {
+
+    },
+    "Close" : {
+
+    },
+    "Comparison complete: everyone you follow follows you back." : {
+
+    },
+    "Completed!" : {
+
+    },
+    "Confirm after signing in. Peel cannot verify Instagram login status." : {
+
+    },
+    "Continue" : {
+
+    },
+    "Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected." : {
+
+    },
+    "DEMO MODE · Fictional data" : {
+
+    },
+    "Done" : {
+
+    },
+    "Exclude Account" : {
+
+    },
+    "Excluded" : {
+
+    },
+    "Excluded accounts" : {
+
+    },
+    "Excluded accounts are skipped during Mass Unfollow." : {
+
+    },
+    "Exclusions" : {
+
+    },
+    "Exit Demo" : {
+
+    },
+    "Export JSON Backup" : {
+
+    },
+    "Exported ZIP File" : {
+
+    },
+    "Filter" : {
+
+    },
+    "Followers" : {
+
+    },
+    "Found %lld accounts not following back." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "machine_translated",
+                  "value" : "Found %lld account not following back."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "machine_translated",
+                  "value" : "Found %lld accounts not following back."
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "machine_translated",
+                  "value" : "Found %lld accounts not following back."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Get your Lists" : {
+
+    },
+    "GitHub" : {
+
+    },
+    "How Peel works" : {
+
+    },
+    "How Peel Works" : {
+
+    },
+    "Import failed: %@" : {
+
+    },
+    "Import Lists" : {
+
+    },
+    "Imported Following and Followers lists" : {
+
+    },
+    "Imported lists and review progress cleared." : {
+
+    },
+    "Include" : {
+
+    },
+    "Include @%@" : {
+
+    },
+    "Information" : {
+
+    },
+    "Instagram Could Not Load" : {
+
+    },
+    "Instagram Export" : {
+
+    },
+    "Instagram is limiting requests. Wait before retrying." : {
+
+    },
+    "Instagram opened a sign-in or verification page. Complete it on Instagram, then retry the profile." : {
+
+    },
+    "Instagram returned an error (%lld). Try again later." : {
+
+    },
+    "Instagram website sessions" : {
+
+    },
+    "It does not export Instagram passwords, photos, or login information. Keep the file private because it contains usernames." : {
+
+    },
+    "JSON backups contain imported usernames, exclusions, and review progress. Sharing sends the file to the destination you choose. Keep backups private. Reset Lists does not delete copies you have already shared." : {
+
+    },
+    "Last reviewed  @%@" : {
+
+    },
+    "License" : {
+
+    },
+    "LinkedIn" : {
+
+    },
+    "Loading profile photos sends network requests to Instagram and its image providers. Embedded website content may also contact service providers." : {
+
+    },
+    "Log Out" : {
+
+    },
+    "Log Out of Instagram" : {
+
+    },
+    "Log out of Instagram?" : {
+
+    },
+    "Login complete" : {
+
+    },
+    "Login complete?" : {
+
+    },
+    "Login to Instagram" : {
+
+    },
+    "Mass Unfollow" : {
+
+    },
+    "Mass Unfollow opens Instagram profiles one by one. Peel does not automatically unfollow anyone. You decide what to do on Instagram. A profile is marked reviewed after it loads; this does not confirm an unfollow." : {
+
+    },
+    "Mass Unfollow progress" : {
+
+    },
+    "Menu" : {
+
+    },
+    "MIT License\n\nCopyright (c) 2026 Ian Gnk\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." : {
+
+    },
+    "Mutual" : {
+
+    },
+    "Next Account" : {
+
+    },
+    "No accounts in this list." : {
+
+    },
+    "No Exclusions" : {
+
+    },
+    "No matching usernames." : {
+
+    },
+    "No usernames found." : {
+
+    },
+    "Not a Peel progress file." : {
+
+    },
+    "Once your export is ready, download the ZIP and import it in Peel." : {
+
+    },
+    "Open" : {
+
+    },
+    "Open Instagram’s Export page" : {
+
+    },
+    "Operation completed." : {
+
+    },
+    "Operation Could Not Complete" : {
+
+    },
+    "Order" : {
+
+    },
+    "Original order" : {
+
+    },
+    "Peel" : {
+
+    },
+    "Peel compares imported usernames on your device. It shows accounts that don't follow you back, your followers, and mutual accounts." : {
+
+    },
+    "Peel demo mode" : {
+
+    },
+    "Peel opens Instagram in an in-app browser. You sign in on Instagram's website, not to a Peel account. Peel does not collect or store your password; Instagram may retain website session data." : {
+
+    },
+    "Peel saves imported usernames, exclusions, and review progress in its local app storage. iOS may include local app data in device backups." : {
+
+    },
+    "People who follow you, but you don't follow back" : {
+
+    },
+    "Press and hold for 10 seconds, or use the Toggle Demo Mode accessibility action" : {
+
+    },
+    "Previous Account" : {
+
+    },
+    "Privacy & Storage" : {
+
+    },
+    "Progress" : {
+
+    },
+    "Progress could not be saved. Your last saved state has been kept. Retry before continuing." : {
+
+    },
+    "Remaining" : {
+
+    },
+    "Remove Exclusion" : {
+
+    },
+    "Reset and logout" : {
+
+    },
+    "Reset imported lists?" : {
+
+    },
+    "Reset Lists" : {
+
+    },
+    "Reset Lists clears imported lists, exclusions, and review progress while keeping the website session. Log Out requests removal of matching Instagram and Meta website data in Peel; imported lists and progress remain saved." : {
+
+    },
+    "Restore Backup" : {
+
+    },
+    "Restore failed: %@" : {
+
+    },
+    "Restore Progress" : {
+
+    },
+    "Restoring your lists…" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Retry Photo" : {
+
+    },
+    "Review" : {
+
+    },
+    "Review progress" : {
+
+    },
+    "Reviewed" : {
+
+    },
+    "Reviewed %lld / %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reviewed %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Save Progress" : {
+
+    },
+    "Saved on this device" : {
+
+    },
+    "Saved progress could not be read. The original data has been kept. Retry or restore a valid backup." : {
+
+    },
+    "Search usernames" : {
+
+    },
+    "Select Followers and following in Accounts Center, then request your ZIP in HTML or JSON." : {
+
+    },
+    "Share Profile" : {
+
+    },
+    "Sign in to Instagram" : {
+
+    },
+    "Sign-in takes place in a WebKit browser. Website cookies and session data may persist after the browser closes. Login Complete is your confirmation; Peel cannot verify Instagram authentication." : {
+
+    },
+    "Signing out…" : {
+
+    },
+    "Sort" : {
+
+    },
+    "Start from here" : {
+
+    },
+    "Start from here?" : {
+
+    },
+    "Start Review" : {
+
+    },
+    "The backup could not be written. Check available storage and try again." : {
+
+    },
+    "The file cannot be read. Choose it again in Files." : {
+
+    },
+    "The JSON file is damaged or incomplete. Download the export again." : {
+
+    },
+    "The page or image is unavailable. Try again later." : {
+
+    },
+    "The request timed out. Check your connection and retry." : {
+
+    },
+    "The web page stopped unexpectedly. Retry to reload it." : {
+
+    },
+    "This backup contains invalid progress. Your existing data has been kept." : {
+
+    },
+    "This exports a JSON file containing:" : {
+
+    },
+    "This file contains the other list. Choose the matching Following or Followers file." : {
+
+    },
+    "This file exceeds the safe import size. Choose a smaller export." : {
+
+    },
+    "This Instagram address could not be opened." : {
+
+    },
+    "This Instagram format is not supported. Request a new Followers and following export in JSON or HTML." : {
+
+    },
+    "This removes every account before @%@ from your queue, including their review marks. You cannot undo it without a saved progress file." : {
+
+    },
+    "This ZIP is damaged, incomplete, encrypted, or uses unsupported compression. Download a new JSON or HTML export." : {
+
+    },
+    "Toggle Demo Mode" : {
+
+    },
+    "Trim Queue" : {
+
+    },
+    "Unable to read selected file." : {
+
+    },
+    "Unfollow" : {
+
+    },
+    "Unfollowers" : {
+
+    },
+    "Use Instagram's Accounts Center to request a Followers and following export. Instagram prepares it asynchronously. Download the ZIP and import it directly into Peel; no extraction is needed." : {
+
+    },
+    "Working…" : {
+
+    },
+    "Wrong file: %@. Select the matching Instagram export instead." : {
+
+    },
+    "You appear to be offline. Check your connection and retry." : {
+
+    },
+    "You sign in on Instagram’s website. WebKit may retain cookies and website session data. Peel does not collect your password and cannot verify login status." : {
+
+    },
+    "Your accounts will appear here after comparing lists." : {
+
+    },
+    "Your Data" : {
+
+    },
+    "Your imported lists, exclusions, and review progress are stored locally by Peel. Backups contain usernames, so keep them private." : {
+
+    },
+    "Your Instagram review space" : {
+
+    },
+    "Your Peel backup" : {
+
+    },
+    "Your review" : {
+
+    },
+    "Your review progress and queue" : {
+
+    },
+    "Z–A" : {
+
+    },
+    "ZIP import failed: %@" : {
+
+    }
+  },
+  "version" : "1.3"
+}
