@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A00000000000000000000004 /* PeelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000001 /* PeelApp.swift */; };
 		A00000000000000000000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000013 /* Assets.xcassets */; };
+		B12300000000000000000001 /* Peel-Sample-Archive.zip in Resources */ = {isa = PBXBuildFile; fileRef = B12300000000000000000002 /* Peel-Sample-Archive.zip */; };
 		FB98908430B239330043FF14 /* PeelTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908330B239330043FF14 /* PeelTheme.swift */; };
 		FB98908630B239340043FF14 /* PeelDemoMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908530B239340043FF14 /* PeelDemoMode.swift */; };
 		FB98908830B239340043FF14 /* PeelProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908730B239340043FF14 /* PeelProgressBar.swift */; };
@@ -82,6 +83,7 @@
 		A00000000000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00000000000000000000003 /* Peel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Peel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A00000000000000000000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B12300000000000000000002 /* Peel-Sample-Archive.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "Peel-Sample-Archive.zip"; sourceTree = "<group>"; };
 		FB98906330B237F70043FF14 /* PeelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB98906E30B238960043FF14 /* PeelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB98908330B239330043FF14 /* PeelTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeelTheme.swift; sourceTree = "<group>"; };
@@ -376,6 +378,7 @@
 		FB98912930B253F00043FF14 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B12300000000000000000002 /* Peel-Sample-Archive.zip */,
 				FB98912A30B253F00043FF14 /* Localization */,
 			);
 			path = Resources;
@@ -502,6 +505,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B12300000000000000000001 /* Peel-Sample-Archive.zip in Resources */,
 				FB98912530B253C20043FF14 /* Localizable.xcstrings in Resources */,
 				FB98912630B253C20043FF14 /* InfoPlist.xcstrings in Resources */,
 				FB98913230B2596B0043FF14 /* PrivacyInfo.xcprivacy in Resources */,

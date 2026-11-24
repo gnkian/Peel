@@ -12,6 +12,13 @@ struct PeelMenuView: View {
         NavigationStack {
             Form {
                 Section("Your Data") {
+                    if model.isDemo {
+                        Button { model.importSampleArchive() } label: {
+                            Label("Import Sample Archive", systemImage: "doc.zipper")
+                        }
+                        .disabled(model.operationState.isRunning)
+                        .accessibilityIdentifier("importSampleArchive")
+                    }
                     Button { showExportGuide = true } label: { Label("Save Progress", systemImage: "square.and.arrow.up") }
                     Button { restorePicker = true } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
                         .disabled(model.isDemo)
@@ -122,7 +129,7 @@ struct PeelMenuView: View {
                 Button("Cancel", role: .cancel) {}
             } message: { Text("Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected.") }
         }
-        .operationFeedback(model: model, enabled: !showExportGuide, chooseFile: { restorePicker = true })
+        .operationFeedback(model: model, enabled: !showExportGuide, chooseFile: model.isDemo ? nil : { restorePicker = true })
         .tint(.primary)
     }
 }

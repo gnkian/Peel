@@ -87,7 +87,7 @@ final class PeelUITests: XCTestCase {
         XCTAssertTrue(logo.waitForExistence(timeout: 15))
         logo.press(forDuration: 1)
         XCTAssertFalse(app.buttons["Exit Demo"].exists)
-        logo.press(forDuration: 10.2)
+        logo.press(forDuration: 5.2)
         XCTAssertTrue(app.buttons["Exit Demo"].waitForExistence(timeout: 5))
         let destination = app.tabBars.buttons["Unfollowers"].exists
             ? app.tabBars.buttons["Unfollowers"] : app.buttons["Unfollowers"].firstMatch

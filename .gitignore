@@ -47,6 +47,7 @@ AuthKey_*
 # Personal exports/backups; retain synthetic test ZIPs
 *.zip
 !PeelTests/Fixtures/*.zip
+!Peel/Resources/Peel-Sample-Archive.zip
 peel-progress*.json
 follow-manager-backup*.json
 PrivateData/

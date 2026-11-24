@@ -25,9 +25,9 @@ struct ContentView: View {
                             .scaledToFit()
                             .frame(width: 54, height: 54)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
-                            .onLongPressGesture(minimumDuration: 10) { demoMode.toggle() }
+                            .onLongPressGesture(minimumDuration: 5) { demoMode.toggle() }
                             .accessibilityLabel("Peel demo mode")
-                            .accessibilityHint("Press and hold for 10 seconds, or use the Toggle Demo Mode accessibility action")
+                            .accessibilityHint("Press and hold for 5 seconds, or use the Toggle Demo Mode accessibility action")
                             .accessibilityAddTraits(.isButton)
                             .accessibilityAction { demoMode.toggle() }
                             .accessibilityAction(named: Text("Toggle Demo Mode")) { demoMode.toggle() }

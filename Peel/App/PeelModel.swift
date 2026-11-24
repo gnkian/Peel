@@ -158,7 +158,8 @@ import SwiftUI
         if let date = failure?.error.retryAfter, date > Date() { return }
         failure = nil
         switch operation {
-        case .zip(let url): importZIP(url)
+        case .zip(let url):
+            if isDemo { importSampleArchive() } else { importZIP(url) }
         case .list(let urls, let kind): importList(urls, kind: kind)
         case .restore(let url): restore(url)
         case .startup: reloadSavedData()
@@ -355,7 +356,19 @@ import SwiftUI
     @discardableResult
     func importZIP(_ url: URL) -> Task<Void, Never> {
         guard !isDemo else { return Task {} }
-        let current = snapshot
+        return importArchive(url, current: snapshot)
+    }
+
+    /// Only the isolated demo model can import the bundled fictional archive.
+    @discardableResult
+    func importSampleArchive() -> Task<Void, Never> {
+        guard isDemo else { return Task {} }
+        let url = Bundle.main.url(forResource: "Peel-Sample-Archive", withExtension: "zip")
+            ?? Bundle.main.bundleURL.appendingPathComponent("Peel-Sample-Archive.zip")
+        return importArchive(url, current: .empty)
+    }
+
+    private func importArchive(_ url: URL, current: SavedSnapshot) -> Task<Void, Never> {
         let importer = importer
         return perform(.zip(url)) {
             let result = try await importer.importZIP(url)

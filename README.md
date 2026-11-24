@@ -37,11 +37,12 @@ These are existing app captures, not generated mockups. The iPhone lists show fi
 
 1. Open `Peel.xcodeproj` and select the shared **Peel** scheme.
 2. Choose an installed **iPhone or iPad simulator** and run with **⌘R**.
-3. On Review, hold the Peel logo for **10 seconds** to enter Demo Mode. With VoiceOver, activate the logo or use its **Toggle Demo Mode** action.
-4. Explore fictional lists, review counts, search, sorting, filters and exclusions. Demo Mode suppresses live profile browsing and avatar requests, imports, restoration and persistent review writes.
-5. Use **Exit Demo** to return to the live model and its saved data.
+3. On Review, hold the Peel logo for **5 seconds** to enter Demo Mode. With VoiceOver, activate the logo or use its **Toggle Demo Mode** action.
+4. In **Menu → Your Data**, tap **Import Sample Archive**. This Demo-only option imports the bundled synthetic ZIP through the production archive parser without a file picker or network access. It contains 50 technology-company usernames: 15 mutual, 20 not following back and 15 followers you do not follow back. All relationships and Unix timestamps are fictional.
+5. Explore the imported lists, review counts, search, sorting, filters and exclusions. Demo Mode suppresses live profile browsing, avatar requests, personal-file imports, restoration and persistent review writes. Sample imports reset demo review progress and never overwrite real saved data.
+6. Use **Exit Demo** to return to the live model and its saved data.
 
-No backend account, API token, environment file or third-party dependency installation is needed. An earlier run missed activation of the ten-second gesture; its cause remains unresolved despite later passes.
+No backend account, API token, environment file or third-party dependency installation is needed. An earlier run missed activation of the former ten-second gesture; its cause remains unresolved despite later passes. Activation now uses a five-second hold.
 
 ### Verified toolchain and configuration
 
@@ -232,7 +233,8 @@ Peel/
     DesignSystem/                 Shared controls, progress and UIKit sharing
   Features/                       Dashboard, Import, Accounts, Review,
                                   Authentication, Demo and Settings
-  Resources/Localization/         English Localizable and InfoPlist catalogs
+  Resources/                     Bundled synthetic sample archive
+    Localization/                 English Localizable and InfoPlist catalogs
   Assets.xcassets/                 Required app icon, logo and link icons
   Info.plist
   PrivacyInfo.xcprivacy
@@ -260,7 +262,7 @@ No package manifest is needed because there are no third-party packages to resol
 
 Peel is under development. **Simulator coverage does not establish App Store readiness, external-service authorization or complete device compatibility.**
 
-1. **Original Demo gesture:** a prior ten-second press missed activation. Three isolated repeats per simulator and later complete passes did not establish its cause. The original gesture and accessible action remain. [Known intermittent failures](Docs/Testing.md#known-intermittent-failures).
+1. **Original Demo gesture:** a prior ten-second press missed activation. Three isolated repeats per simulator and later complete passes did not establish its cause. The accessible action remains; the hold duration is now five seconds. [Known intermittent failures](Docs/Testing.md#known-intermittent-failures).
 2. **Historical XCTest failures:** earlier combined runs had launch/accessibility failures; later diagnostics recorded a 120-second daemon timeout and termination-state mismatch after a process-death notice. Post-restart passes demonstrate recovery, not proof that every earlier failure was environment-only. [Test results and limitations](Docs/Testing.md).
 3. **Manual verification:** physical iPhone/iPad, iOS 17, VoiceOver, all Dynamic Type sizes, live Split View/Stage Manager resizing, real sharing consumers and lifecycle/storage stress remain incompletely verified.
 4. **Live Instagram:** login/2FA/challenges/logout, current real exports, avatars, offline recovery and observed rate limits need authorized manual checks. Fictional fixtures do not establish current service behavior. No account-action automation or restriction workaround is supplied.
