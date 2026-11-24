@@ -46,7 +46,7 @@ struct BrowserSheet: View {
                     }
                     .buttonStyle(CompactGrayButton())
                     .accessibilityLabel("Previous Account")
-                    .disabled(model.browserIndex == 0)
+                    .disabled(!model.canEditLists || model.browserIndex == 0)
                     Button {
                         if model.browserRemaining == 0 { dismiss(); model.instagramUser = nil }
                         else { withAnimation(reduceMotion ? nil : .smooth(duration: 0.25)) { _ = model.nextInBrowser() } }
@@ -54,7 +54,7 @@ struct BrowserSheet: View {
                         Label(model.browserRemaining == 0 ? LocalizedStringResource("Completed!") : LocalizedStringResource("Next Account"), systemImage: model.browserRemaining == 0 ? "checkmark" : "arrow.right")
                     }
                     .buttonStyle(CompactOrangeButton())
-                    .disabled(browserState.phase != .loaded)
+                    .disabled(!model.canEditLists || browserState.phase != .loaded)
                 }
                 .padding(12)
                 .background(panel)

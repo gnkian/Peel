@@ -39,8 +39,10 @@ These are existing app captures, not generated mockups. The iPhone lists show fi
 2. Choose an installed **iPhone or iPad simulator** and run with **⌘R**.
 3. On Review, hold the Peel logo for **5 seconds** to enter Demo Mode. With VoiceOver, activate the logo or use its **Toggle Demo Mode** action.
 4. In **Menu → Your Data**, tap **Import Sample Archive**. This Demo-only option imports the bundled synthetic ZIP through the production archive parser without a file picker or network access. It contains 50 technology-company usernames: 15 mutual, 20 not following back and 15 followers you do not follow back. All relationships and Unix timestamps are fictional.
-5. Explore the imported lists, review counts, search, sorting, filters and exclusions. Demo Mode suppresses live profile browsing, avatar requests, personal-file imports, restoration and persistent review writes. Sample imports reset demo review progress and never overwrite real saved data.
+5. Explore the imported lists, review counts, search, sorting, filters and exclusions. Demo Mode suppresses live profile browsing, avatar requests, personal-file imports, restoration and persistent review writes. Sample imports reset demo review progress and never overwrite real saved data. Demo avatars stay offline, including the company accounts in the sample.
 6. Use **Exit Demo** to return to the live model and its saved data.
+
+During an import or restore, review, exclusion and queue-trimming controls are temporarily unavailable. Wait for completion or use **Cancel** before editing; **Reset Lists** still explicitly cancels pending work.
 
 No backend account, API token, environment file or third-party dependency installation is needed. An earlier run missed activation of the former ten-second gesture; its cause remains unresolved despite later passes. Activation now uses a five-second hold.
 
@@ -187,7 +189,7 @@ The focused test passed after a non-erasing Xcode/iPad simulator restart. The co
 - `PeelTests`: comparison/exclusions across modes, review progress/live counts, ordering, JSON/HTML/text characterization, ZIP bounds/corruption, persistence/backup compatibility, stale-operation races, Demo isolation, avatar metadata/request contracts, HTTP failures/redirects, browser failures, session-record selection, temporary-export ownership and localization/privacy declarations.
 - Five tiny ZIP fixtures contain fictional `peel_fixture_*` names, including malformed and missing-list variants. Controlled importer/storage/HTTP mocks produce deterministic failures. Automated tests make no live Instagram requests.
 - Cancellation tests synchronize with actual worker start. Rate-limit tests hold replies until the initial request batch is observed. Other operation-race tests use controlled continuations with bounded polling; the suite is not presented as universally timing-free.
-- Six UI tests cover navigation, corrupt-storage recovery/retry, large text/rotation, the original Demo gesture/populated lists, privacy navigation and backup sharing cancellation/repeat. They use unique disposable defaults domains through the Debug-only harness and `XCUIApplication()` with **Target Application: Peel**.
+- Seven UI tests cover navigation, corrupt-storage recovery/retry, large text/rotation, the original Demo gesture/populated lists, bundled sample import and Demo-only menu visibility, privacy navigation and backup sharing cancellation/repeat. They use unique disposable defaults domains through the Debug-only harness and `XCUIApplication()` with **Target Application: Peel**.
 
 ### Reproduce locally
 
@@ -239,7 +241,7 @@ Peel/
   Info.plist
   PrivacyInfo.xcprivacy
 PeelTests/                        Swift Testing suites, mocks and ZIP fixtures
-PeelUITests/                      Six XCTest/XCUIAutomation scenarios
+PeelUITests/                      Seven XCTest/XCUIAutomation scenarios
 Docs/                             Testing, integration and release documentation
   assets/                         Screenshots, logo and image provenance
   Verification/                   Implementation SHA-256 manifest

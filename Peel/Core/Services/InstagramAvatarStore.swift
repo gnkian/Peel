@@ -23,8 +23,8 @@ final class InstagramAvatarStore: ObservableObject {
 
     func image(for username: String) -> UIImage? { images[username] }
 
-    func load(_ username: String) async {
-        guard UsernameParser.valid(username), !username.hasPrefix("peeldemo_"),
+    func load(_ username: String, allowsNetwork: Bool = true) async {
+        guard allowsNetwork, UsernameParser.valid(username), !username.hasPrefix("peeldemo_"),
               images[username] == nil, now() >= cooldown,
               now() >= (retryDates[username] ?? .distantPast) else { return }
         if let existing = tasks[username] { _ = try? await existing.value; return }
@@ -72,20 +72,24 @@ final class InstagramAvatarStore: ObservableObject {
         } onCancel: { task.cancel() }
     }
 
-    func retry(_ username: String) async {
-        guard now() >= cooldown else { return }
+    func retry(_ username: String, allowsNetwork: Bool = true) async {
+        guard allowsNetwork, now() >= cooldown else { return }
         retryDates[username] = nil
-        await load(username)
+        await load(username, allowsNetwork: allowsNetwork)
     }
 }
 
 struct InstagramAvatar: View {
     let username: String
-    @ObservedObject private var store = InstagramAvatarStore.shared
+    let allowsNetwork: Bool
+    @ObservedObject var store: InstagramAvatarStore = .shared
+
+    func load() async { await store.load(username, allowsNetwork: allowsNetwork) }
+    func retry() async { await store.retry(username, allowsNetwork: allowsNetwork) }
 
     var body: some View {
         Group {
-            if username.hasPrefix("peeldemo_") {
+            if !allowsNetwork || username.hasPrefix("peeldemo_") {
                 Image(systemName: "person.crop.circle.fill")
                     .resizable().scaledToFit()
                     .foregroundStyle(.secondary)
@@ -102,11 +106,11 @@ struct InstagramAvatar: View {
         .frame(width: 34, height: 34)
         .clipShape(Circle())
         .contextMenu {
-            if store.failures[username] != nil {
-                Button("Retry Photo") { Task { await store.retry(username) } }
+            if allowsNetwork && store.failures[username] != nil {
+                Button("Retry Photo") { Task { await retry() } }
             }
         }
         .accessibilityHidden(true)
-        .task(id: username) { if !username.hasPrefix("peeldemo_") { await store.load(username) } }
+        .task(id: allowsNetwork ? username : nil) { await load() }
     }
 }

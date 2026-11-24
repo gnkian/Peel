@@ -105,12 +105,12 @@ struct RelationshipListView: View {
                 .font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 17)
                 .frame(minHeight: 48)
-                .foregroundStyle(!model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count ? Color.white.opacity(0.42) : Color.black)
-                .background(!model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count ? Color.gray.opacity(0.28) : orange,
+                .foregroundStyle(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count ? Color.white.opacity(0.42) : Color.black)
+                .background(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count ? Color.gray.opacity(0.28) : orange,
                             in: RoundedRectangle(cornerRadius: 14))
             }
             .buttonStyle(.plain)
-            .disabled(!model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count)
+            .disabled(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count)
             Rectangle().fill(.white.opacity(0.10)).frame(height: 1)
             HStack(spacing: 9) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
@@ -156,10 +156,11 @@ struct RelationshipListView: View {
     private func accountRow(index: Int, user: String) -> some View {
         AccountReviewRow(
             username: user, index: index + 1, actionTitle: "Open",
-            enabled: model.instagramLoginConfirmed, excluded: model.excluded.contains(user),
+            enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: !model.isDemo, excluded: model.excluded.contains(user),
             open: { model.startBrowser(mode: mode, at: user) },
             toggleExclusion: { model.toggleExclude(user) }
         )
+        .disabled(!model.canEditLists)
     }
 }
 
@@ -170,6 +171,7 @@ struct AccountReviewRow: View {
     var status: LocalizedStringResource? = nil
     let actionTitle: LocalizedStringResource
     let enabled: Bool
+    let allowsAvatarNetwork: Bool
     let excluded: Bool
     let open: () -> Void
     let toggleExclusion: () -> Void
@@ -185,7 +187,7 @@ struct AccountReviewRow: View {
                         .foregroundStyle(.secondary)
                         .accessibilityHidden(true)
                 }
-                InstagramAvatar(username: username)
+                InstagramAvatar(username: username, allowsNetwork: allowsAvatarNetwork)
                 VStack(alignment: .leading, spacing: 3) {
                     Text(verbatim: "@\(username)")
                         .font(.subheadline.weight(.medium))

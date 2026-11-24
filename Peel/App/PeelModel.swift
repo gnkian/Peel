@@ -207,6 +207,9 @@ import SwiftUI
         operationTask = task
         return task
     }
+    /// Imports and restores own the list snapshot until they finish or are explicitly cancelled.
+    var canEditLists: Bool { !isRestoring && !operationState.isRunning }
+
     var doneSet: Set<String> { Set(queue.done) }
     var remaining: Int {
         let done = doneSet
@@ -226,6 +229,7 @@ import SwiftUI
         switch mode { case .unfollow: return doneSet; case .followers: return nonMutualReviewed; case .mutual: return mutualReviewed }
     }
     func markReviewed(_ user: String, mode: ReviewMode) {
+        guard canEditLists else { return }
         switch mode {
         case .unfollow: recordReviewed(user)
         case .followers: nonMutualReviewed.insert(user)
@@ -241,7 +245,7 @@ import SwiftUI
         return browserUsers.filter { done.contains($0) }.count
     }
     func startBrowser(mode: ReviewMode, at user: String? = nil) {
-        guard !isDemo else { return }
+        guard !isDemo, canEditLists else { return }
         browserMode = mode
         switch mode {
         case .unfollow: browserUsers = queue.users
@@ -264,15 +268,18 @@ import SwiftUI
     }
     func persistPreferences() { persist() }
     func toggleExclude(_ user: String) {
+        guard canEditLists else { return }
         if excluded.contains(user) { excluded.remove(user) } else { excluded.insert(user) }
     }
     func openInBrowser(_ user: String) { guard !isDemo else { return }; startBrowser(mode: .unfollow, at: user) }
     func previousInBrowser() {
+        guard canEditLists else { return }
         guard browserIndex > 0, browserHistory.indices.contains(browserIndex - 1) else { return }
         browserIndex -= 1
         showBrowserUser(browserHistory[browserIndex])
     }
     @discardableResult func nextInBrowser() -> Bool {
+        guard canEditLists else { return false }
         if browserIndex >= 0, browserIndex < browserHistory.count - 1 {
             browserIndex += 1
             showBrowserUser(browserHistory[browserIndex])
@@ -297,6 +304,7 @@ import SwiftUI
         }
     }
     func compare() {
+        guard canEditLists else { return }
         let followerSet = Set(followerNames)
         let users = followingNames.filter { !followerSet.contains($0) }
         let oldDone = doneSet
@@ -312,7 +320,7 @@ import SwiftUI
         queue = updated
     }
     @discardableResult func openNext() -> Bool {
-        guard !queue.users.isEmpty else { return false }
+        guard canEditLists, !queue.users.isEmpty else { return false }
         let done = doneSet
         let cursor = queue.users.indices.contains(queue.cursor) ? queue.cursor : 0
         for offset in 0..<queue.users.count {
@@ -323,6 +331,7 @@ import SwiftUI
         return false
     }
     func start(at user: String) {
+        guard canEditLists else { return }
         guard let index = queue.users.firstIndex(of: user) else { return }
         var updated = queue
         updated.users = Array(updated.users[index...])

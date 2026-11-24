@@ -28,6 +28,27 @@ struct SampleArchiveTests {
         #expect(Set(["apple", "google", "meta", "microsoft", "nvidia", "openai", "github", "adobe", "spotify", "figma"]).isSubset(of: following.union(followers)))
     }
 
+    @Test func sampleAvatarDisplayAndRetryRemainOffline() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let demo = PeelModel(demo: true, defaults: fixture.defaults)
+        await demo.importSampleArchive().value
+        try #require(demo.failure == nil)
+        let mock = MockHTTPClient([])
+        let store = InstagramAvatarStore(client: mock)
+        let names = Set(demo.followingNames + demo.followerNames)
+        #expect(names.count == 50)
+        for username in names {
+            // Exercise the same loading and retry entry points used by the avatar view.
+            let avatar = InstagramAvatar(username: username, allowsNetwork: !demo.isDemo, store: store)
+            await avatar.load()
+            await avatar.retry()
+        }
+        #expect(await mock.requests == 0)
+        #expect(store.images.isEmpty)
+        #expect(store.failures.isEmpty)
+    }
+
     @Test func sampleImportIsIsolatedAndStartsWithFreshProgress() async throws {
         let fixture = try ModelFixture()
         defer { fixture.cleanUp() }

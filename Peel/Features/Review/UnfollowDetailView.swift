@@ -105,15 +105,15 @@ struct UnfollowDetailView: View {
                 .font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 17)
                 .frame(minHeight: 48)
-                .foregroundStyle((!model.instagramLoginConfirmed || model.queue.mode != "comparison" || model.remaining == 0) ? Color.white.opacity(0.42) : Color.black)
+                .foregroundStyle((!model.canEditLists || !model.instagramLoginConfirmed || model.queue.mode != "comparison" || model.remaining == 0) ? Color.white.opacity(0.42) : Color.black)
                 .background(
-                    (!model.instagramLoginConfirmed || model.queue.mode != "comparison" || model.remaining == 0)
+                    (!model.canEditLists || !model.instagramLoginConfirmed || model.queue.mode != "comparison" || model.remaining == 0)
                     ? Color.gray.opacity(0.28) : orange,
                     in: RoundedRectangle(cornerRadius: 14)
                 )
             }
             .buttonStyle(.plain)
-            .disabled(!model.instagramLoginConfirmed || model.queue.mode != "comparison" || model.remaining == 0)
+            .disabled(!model.canEditLists || !model.instagramLoginConfirmed || model.queue.mode != "comparison" || model.remaining == 0)
             if let user = model.queue.lastOpened {
                 Text("Last reviewed  @\(user)")
                     .font(.caption)
@@ -161,12 +161,13 @@ struct UnfollowDetailView: View {
                         AccountReviewRow(
                             username: user, index: index + 1,
                             status: model.excluded.contains(user) ? "Excluded" : model.doneSet.contains(user) ? "Reviewed" : "Awaiting review",
-                            actionTitle: "Unfollow", enabled: model.instagramLoginConfirmed,
+                            actionTitle: "Unfollow", enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: !model.isDemo,
                             excluded: model.excluded.contains(user),
                             open: { model.openInBrowser(user) },
                             toggleExclusion: { model.toggleExclude(user) },
                             trim: { trimTarget = user }
                         )
+                        .disabled(!model.canEditLists)
                         .overlay(alignment: .bottom) {
                             Rectangle().fill(.white.opacity(0.065)).frame(height: 1)
                         }

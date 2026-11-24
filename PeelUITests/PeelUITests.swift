@@ -102,6 +102,42 @@ final class PeelUITests: XCTestCase {
         // Inspect only; never open Instagram or perform account actions.
     }
 
+    func testSampleArchiveMenuAndImportedRelationships() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        app.launch()
+        func select(_ title: String) {
+            let tab = app.tabBars.buttons[title]
+            let destination = tab.exists ? tab : app.buttons[title].firstMatch
+            XCTAssertTrue(destination.waitForExistence(timeout: 15))
+            destination.tap()
+        }
+        select("Menu")
+        XCTAssertFalse(app.buttons["importSampleArchive"].exists)
+        select("Review")
+        let logo = app.buttons["demoLogo"]
+        XCTAssertTrue(logo.waitForExistence(timeout: 5))
+        logo.press(forDuration: 5.2)
+        XCTAssertTrue(app.buttons["Exit Demo"].waitForExistence(timeout: 5))
+        select("Menu")
+        let sample = app.buttons["importSampleArchive"]
+        XCTAssertTrue(sample.waitForExistence(timeout: 5))
+        sample.tap()
+        select("Mutual")
+        XCTAssertTrue(app.staticTexts["0 of 15 reviewed"].waitForExistence(timeout: 10))
+        let search = app.textFields["Search usernames"]
+        search.tap()
+        search.typeText("apple")
+        XCTAssertTrue(app.staticTexts["@apple"].waitForExistence(timeout: 5))
+        select("Review")
+        app.buttons["Exit Demo"].tap()
+        select("Menu")
+        XCTAssertFalse(app.buttons["importSampleArchive"].exists)
+        select("Mutual")
+        XCTAssertTrue(app.staticTexts["Your accounts will appear here after comparing lists."].exists)
+    }
+
     func testPrivacyInformationNavigation() {
         continueAfterFailure = false
         let app = XCUIApplication()
