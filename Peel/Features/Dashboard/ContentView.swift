@@ -1,5 +1,4 @@
 import SwiftUI
-import UniformTypeIdentifiers
 
 // Review is the single entry point. Existing review screens remain separate.
 struct ContentView: View {
@@ -9,7 +8,7 @@ struct ContentView: View {
     @ScaledMetric(relativeTo: .largeTitle) private var titleSize = 34
     @ScaledMetric(relativeTo: .title) private var countSize = 30
     @State private var showingLogin = false
-    @State private var showingZIPPicker = false
+    @State private var importRequest: DocumentImportKind?
     @State private var showingExportGuide = false
 
     private var ready: Bool { model.instagramLoginConfirmed && model.queue.mode == "comparison" }
@@ -69,7 +68,7 @@ struct ContentView: View {
                             instagramActionTile("Get your Lists", subtitle: "Open Instagram’s Export page", icon: "arrow.down.doc")
                         }
                         .disabled(!model.instagramLoginConfirmed || model.isDemo)
-                        Button { showingZIPPicker = true } label: {
+                        Button { importRequest = .archive } label: {
                             instagramActionTile("Import Lists", subtitle: "Exported ZIP File", icon: "doc.zipper")
                         }
                         .accessibilityIdentifier("importLists")
@@ -122,14 +121,10 @@ struct ContentView: View {
             .sheet(isPresented: $showingExportGuide) {
                 InstagramExportGuide()
             }
-            .fileImporter(isPresented: $showingZIPPicker, allowedContentTypes: [UTType(filenameExtension: "zip") ?? .archive]) { result in
-                switch result {
-                case .success(let url): model.importZIP(url)
-                case .failure(let error): model.report(error, operation: .chooseZIP)
-                }
-            }
+            .documentImporter(request: $importRequest, model: model)
         }
-        .operationFeedback(model: model, chooseFile: { showingZIPPicker = true })
+        .operationFeedback(model: model, chooseFile: { importRequest = .archive },
+                           chooseRestore: { importRequest = .backup })
         .tint(orange)
     }
 

@@ -43,7 +43,10 @@ final class PeelUITests: XCTestCase {
         capture("Corrupt storage recovery", app: app)
         alert.buttons["Retry"].tap()
         XCTAssertTrue(alert.waitForExistence(timeout: 15))
-        alert.buttons["Cancel"].tap()
+        alert.buttons["Restore Backup"].tap()
+        let cancelPicker = app.buttons["Cancel"].firstMatch
+        XCTAssertTrue(cancelPicker.waitForExistence(timeout: 10))
+        cancelPicker.tap()
         XCTAssertTrue(app.staticTexts["Your Instagram review space"].waitForExistence(timeout: 5))
     }
 
@@ -136,6 +139,42 @@ final class PeelUITests: XCTestCase {
         XCTAssertFalse(app.buttons["importSampleArchive"].exists)
         select("Mutual")
         XCTAssertTrue(app.staticTexts["Your accounts will appear here after comparing lists."].exists)
+    }
+
+    func testDocumentPickerCancellationAndRepeat() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        // Simulate the existing user-confirmed login flag without opening Instagram.
+        app.launchArguments += ["-peel-instagram-login-confirmed", "YES"]
+        app.launch()
+        let archive = app.buttons["importLists"]
+        XCTAssertTrue(archive.waitForExistence(timeout: 15))
+        XCTAssertTrue(archive.isEnabled)
+        for _ in 0..<2 {
+            archive.tap()
+            let cancel = app.buttons["Cancel"].firstMatch
+            XCTAssertTrue(cancel.waitForExistence(timeout: 10))
+            cancel.tap()
+            XCTAssertTrue(archive.waitForExistence(timeout: 5))
+            XCTAssertTrue(archive.isHittable)
+            XCTAssertFalse(app.alerts["Operation Could Not Complete"].exists)
+        }
+
+        let menu = app.tabBars.buttons["Menu"].exists ? app.tabBars.buttons["Menu"] : app.buttons["Menu"].firstMatch
+        menu.tap()
+        let restore = app.buttons["Restore Progress"]
+        for _ in 0..<2 {
+            XCTAssertTrue(restore.waitForExistence(timeout: 5))
+            restore.tap()
+            let cancel = app.buttons["Cancel"].firstMatch
+            XCTAssertTrue(cancel.waitForExistence(timeout: 10))
+            cancel.tap()
+            XCTAssertTrue(restore.waitForExistence(timeout: 5))
+            XCTAssertTrue(restore.isHittable)
+            XCTAssertFalse(app.alerts["Operation Could Not Complete"].exists)
+            XCTAssertFalse(app.staticTexts["Working…"].exists)
+        }
     }
 
     func testPrivacyInformationNavigation() {

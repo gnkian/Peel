@@ -28,6 +28,8 @@ struct RelationshipListView: View {
         model.instagramLoginConfirmed && model.queue.mode == "comparison"
     }
 
+    @State private var importRequest: DocumentImportKind?
+
     var body: some View {
         ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
@@ -69,7 +71,8 @@ struct RelationshipListView: View {
             )) {
                 BrowserSheet(model: model)
             }
-        .operationFeedback(model: model, enabled: model.instagramUser == nil)
+        .documentImporter(request: $importRequest, model: model)
+        .operationFeedback(model: model, enabled: model.instagramUser == nil, chooseRestore: { importRequest = .backup })
         .tint(orange)
     }
 

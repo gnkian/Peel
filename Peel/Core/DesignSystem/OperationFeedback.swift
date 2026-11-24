@@ -1,14 +1,13 @@
 import SwiftUI
-import UniformTypeIdentifiers
 
 private struct OperationFeedback: ViewModifier {
     @ObservedObject var model: PeelModel
     var startupOnly = false
     var enabled = true
     var chooseFile: (() -> Void)?
+    var chooseRestore: (() -> Void)?
     var retryExport: (() -> Void)?
     @State private var isVisible = false
-    @State private var restorePicker = false
 
     private var presentedFailure: OperationFailure? {
         guard enabled, isVisible, let failure = model.failure else { return nil }
@@ -19,10 +18,10 @@ private struct OperationFeedback: ViewModifier {
 
     private var canChooseFile: Bool {
         guard let failure = presentedFailure else { return false }
-        if failure.error == .corruptSavedData { return true }
+        if failure.error == .corruptSavedData { return chooseRestore != nil }
         switch failure.operation {
         case .zip, .list, .chooseZIP: return chooseFile != nil
-        case .restore, .chooseRestore, .startup: return true
+        case .restore, .chooseRestore, .startup: return chooseRestore != nil
         default: return false
         }
     }
@@ -57,16 +56,16 @@ private struct OperationFeedback: ViewModifier {
                 Button("Retry") {
                     switch failure.operation {
                     case .chooseZIP: chooseFile?()
-                    case .chooseRestore: restorePicker = true
+                    case .chooseRestore: chooseRestore?()
                     case .export: retryExport?()
                     default: model.retryLastOperation()
                     }
                 }
                 if canChooseFile {
                     Button(startupOnly || failure.error == .corruptSavedData ? "Restore Backup" : "Choose Another File") {
-                        if failure.error == .corruptSavedData { restorePicker = true; return }
+                        if failure.error == .corruptSavedData { chooseRestore?(); return }
                         switch failure.operation {
-                        case .restore, .chooseRestore, .startup: restorePicker = true
+                        case .restore, .chooseRestore, .startup: chooseRestore?()
                         default: chooseFile?()
                         }
                     }
@@ -75,19 +74,14 @@ private struct OperationFeedback: ViewModifier {
             } message: { failure in
                 Text(failure.error.text)
             }
-            .fileImporter(isPresented: $restorePicker, allowedContentTypes: [.json]) { result in
-                switch result {
-                case .success(let url): model.restore(url)
-                case .failure(let error): model.report(error, operation: .chooseRestore)
-                }
-            }
     }
 }
 
 extension View {
     func operationFeedback(model: PeelModel, startupOnly: Bool = false, enabled: Bool = true,
-                           chooseFile: (() -> Void)? = nil, retryExport: (() -> Void)? = nil) -> some View {
+                           chooseFile: (() -> Void)? = nil, chooseRestore: (() -> Void)? = nil,
+                           retryExport: (() -> Void)? = nil) -> some View {
         modifier(OperationFeedback(model: model, startupOnly: startupOnly, enabled: enabled,
-                                   chooseFile: chooseFile, retryExport: retryExport))
+                                   chooseFile: chooseFile, chooseRestore: chooseRestore, retryExport: retryExport))
     }
 }

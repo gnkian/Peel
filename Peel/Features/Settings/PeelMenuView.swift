@@ -2,7 +2,8 @@ import SwiftUI
 
 struct PeelMenuView: View {
     @EnvironmentObject private var model: PeelModel
-    @State private var restorePicker = false
+    @State private var importRequest: DocumentImportKind?
+    @State private var guideImportRequest: DocumentImportKind?
     @State private var shareFile: URL?
     @State private var showClear = false
     @State private var showExportGuide = false
@@ -20,7 +21,7 @@ struct PeelMenuView: View {
                         .accessibilityIdentifier("importSampleArchive")
                     }
                     Button { showExportGuide = true } label: { Label("Save Progress", systemImage: "square.and.arrow.up") }
-                    Button { restorePicker = true } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
+                    Button { importRequest = .backup } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
                         .disabled(model.isDemo)
                     Button(role: .destructive) { showClear = true } label: { Label("Reset Lists", systemImage: "trash") }
                     Button(role: .destructive) { showLogoutConfirmation = true } label: {
@@ -92,17 +93,13 @@ struct PeelMenuView: View {
                         }
                     }
                 }
-                .operationFeedback(model: model, retryExport: {
+                .documentImporter(request: $guideImportRequest, model: model)
+                .operationFeedback(model: model, chooseRestore: { guideImportRequest = .backup }, retryExport: {
                     if let url = model.exportFile() { showExportGuide = false; shareFile = url }
                 })
                 .presentationDetents([.medium, .large])
             }
-            .fileImporter(isPresented: $restorePicker, allowedContentTypes: [.json]) { result in
-                switch result {
-                case .success(let url): model.restore(url)
-                case .failure(let error): model.report(error, operation: .chooseRestore)
-                }
-            }
+            .documentImporter(request: $importRequest, model: model)
             .background {
                 if let file = shareFile {
                     ActivitySheet(items: [file], beginActivity: { model.beginExportSharing(file) }, onDismiss: {
@@ -129,7 +126,7 @@ struct PeelMenuView: View {
                 Button("Cancel", role: .cancel) {}
             } message: { Text("Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected.") }
         }
-        .operationFeedback(model: model, enabled: !showExportGuide, chooseFile: model.isDemo ? nil : { restorePicker = true })
+        .operationFeedback(model: model, enabled: !showExportGuide, chooseRestore: model.isDemo ? nil : { importRequest = .backup })
         .tint(.primary)
     }
 }

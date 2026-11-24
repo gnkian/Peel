@@ -4,6 +4,8 @@ struct PeelExclusionsView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @EnvironmentObject private var model: PeelModel
 
+    @State private var importRequest: DocumentImportKind?
+
     var body: some View {
         List {
             if model.excluded.isEmpty {
@@ -26,8 +28,6 @@ struct PeelExclusionsView: View {
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
                                 .accessibilityLabel("Include @\(user)")
-                                .operationFeedback(model: model)
-        .tint(orange)
                         }
                     }
                 } footer: {
@@ -39,6 +39,8 @@ struct PeelExclusionsView: View {
         .background(bg.ignoresSafeArea())
         .navigationTitle("Exclusions")
         .navigationBarTitleDisplayMode(.inline)
+        .documentImporter(request: $importRequest, model: model)
+        .operationFeedback(model: model, chooseRestore: { importRequest = .backup })
         .tint(orange)
     }
 }

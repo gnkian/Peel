@@ -46,6 +46,7 @@ struct PeelTabs: View {
 
     @StateObject private var demoModel = PeelModel(demo: true)
     @StateObject private var demoMode = PeelDemoMode()
+    @State private var importRequest: DocumentImportKind?
     @State private var selection: PeelTab = .review
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -68,7 +69,8 @@ struct PeelTabs: View {
         .environmentObject(demoMode.isEnabled ? demoModel : model)
         .environmentObject(demoMode)
         .id(demoMode.isEnabled ? "demo" : "live")
-        .operationFeedback(model: model, startupOnly: true)
+        .documentImporter(request: $importRequest, model: model)
+        .operationFeedback(model: model, startupOnly: true, chooseRestore: { importRequest = .backup })
         .tint(orange)
     }
 

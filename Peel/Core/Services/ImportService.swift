@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 protocol ImportServicing: Sendable {
     func importZIP(_ url: URL) async throws -> ImportResult
@@ -23,18 +24,38 @@ struct ImportService: ImportServicing {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
         do {
-            let handle = try FileHandle(forReadingFrom: url)
-            defer { try? handle.close() }
-            var result = Data()
-            while let chunk = try handle.read(upToCount: min(65_536, limit + 1 - result.count)), !chunk.isEmpty {
-                try Task.checkCancellation()
-                result.append(chunk)
-                guard result.count <= limit else { throw PeelError.tooLarge }
+            let coordinator = NSFileCoordinator(filePresenter: nil)
+            var coordinationError: NSError?
+            var result: Result<Data, Error>?
+            coordinator.coordinate(readingItemAt: url, options: [], error: &coordinationError) { readableURL in
+                let type = (try? readableURL.resourceValues(forKeys: [.contentTypeKey]))?.contentType?.identifier ?? "unknown"
+                ImportDiagnostics.logger.debug("Reading selected document; type=\(type, privacy: .public), scoped=\(scoped)")
+                result = Result { try readContents(readableURL, limit: limit) }
             }
-            return result
+            try Task.checkCancellation()
+            if let coordinationError { throw coordinationError }
+            guard let result else { throw PeelError.unreadableFile }
+            return try result.get()
         } catch is CancellationError { throw CancellationError() }
         catch let error as PeelError { throw error }
-        catch { throw PeelError.unreadableFile }
+        catch {
+            let underlying = error as NSError
+            ImportDiagnostics.logger.error("Document read failed; domain=\(underlying.domain, privacy: .public), code=\(underlying.code)")
+            throw PeelError.unreadableFile
+        }
+    }
+
+    private static func readContents(_ url: URL, limit: Int) throws -> Data {
+        try Task.checkCancellation()
+        let handle = try FileHandle(forReadingFrom: url)
+        defer { try? handle.close() }
+        var result = Data()
+        while let chunk = try handle.read(upToCount: min(65_536, limit + 1 - result.count)), !chunk.isEmpty {
+            try Task.checkCancellation()
+            result.append(chunk)
+            guard result.count <= limit else { throw PeelError.tooLarge }
+        }
+        return result
     }
 
     func importZIP(_ url: URL) async throws -> ImportResult {

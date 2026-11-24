@@ -1,10 +1,9 @@
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct UnfollowDetailView: View {
     @EnvironmentObject private var model: PeelModel
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @State private var showingZIPPicker = false
+    @State private var importRequest: DocumentImportKind?
     @State private var trimTarget: String?
     @State private var search = ""
     @State private var filter = AccountListFilter.remaining
@@ -31,12 +30,7 @@ struct UnfollowDetailView: View {
             .foregroundStyle(.white)
             .navigationTitle("Unfollowers")
             .navigationBarTitleDisplayMode(.inline)
-            .fileImporter(isPresented: $showingZIPPicker, allowedContentTypes: [UTType(filenameExtension: "zip") ?? .archive]) { result in
-                switch result {
-                case .success(let url): model.importZIP(url)
-                case .failure(let error): model.report(error, operation: .chooseZIP)
-                }
-            }
+            .documentImporter(request: $importRequest, model: model)
             .sheet(isPresented: Binding(get: { model.instagramUser != nil && model.browserMode == .unfollow }, set: { if !$0 { model.instagramUser = nil } })) {
                 BrowserSheet(model: model)
             }
@@ -44,7 +38,8 @@ struct UnfollowDetailView: View {
                 Button("Trim Queue", role: .destructive) { if let user = trimTarget { model.start(at: user) }; trimTarget = nil }
                 Button("Cancel", role: .cancel) { trimTarget = nil }
             } message: { Text("This removes every account before @\(trimTarget ?? "") from your queue, including their review marks. You cannot undo it without a saved progress file.") }
-        .operationFeedback(model: model, enabled: model.instagramUser == nil, chooseFile: { showingZIPPicker = true })
+        .operationFeedback(model: model, enabled: model.instagramUser == nil, chooseFile: { importRequest = .archive },
+                           chooseRestore: { importRequest = .backup })
         .tint(orange)
     }
     private var unavailableAccounts: some View {

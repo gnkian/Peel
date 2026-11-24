@@ -6,6 +6,8 @@ struct BrowserSheet: View {
     @ObservedObject var model: PeelModel
     @StateObject private var browserState = BrowserLoadState()
     @Environment(\.dismiss) private var dismiss
+    @State private var importRequest: DocumentImportKind?
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -77,7 +79,8 @@ struct BrowserSheet: View {
                 }
             }
         }
-        .operationFeedback(model: model)
+        .documentImporter(request: $importRequest, model: model)
+        .operationFeedback(model: model, chooseRestore: { importRequest = .backup })
         .onAppear {
             browserState.reviewToken = model.browserRequestID
             browserState.onProfileLoaded = { user, token in
