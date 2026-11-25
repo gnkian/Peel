@@ -53,6 +53,13 @@ struct ContentView: View {
                         .foregroundStyle(orange)
                         .padding(12)
                         .background(orange.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+                        Button { model.importSampleArchive() } label: {
+                            Label("Import Sample Archive", systemImage: "doc.zipper")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(OrangeButton())
+                        .disabled(model.operationState.isRunning)
+                        .accessibilityIdentifier("importSampleArchive")
                     }
 
                     if !model.instagramLoginConfirmed {

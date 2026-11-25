@@ -99,3 +99,5 @@ Menu → Your Data → Reset Data → Clear Cache displays the saved thumbnail s
 Regression checks cover persistence across store recreation, memory-to-disk saving, exact file-byte accounting, cache capacity, corruption, failed writes/removal, and clearing during an active download. Native UI coverage checks both Cancel and confirmed clearing.
 
 Reset Data groups Reset Lists, Log Out of Instagram and Clear Cache. The session row is last: Log Out of Instagram when logged in, and Login to Instagram when logged out, including after sign-out completes. Login opens the same native login guide used by the orange Review button; cancelling it leaves the session unchanged. UI coverage checks the grouped navigation, the concise cache confirmation and both logout states.
+
+In Demo Mode, Import Sample Archive appears on Review rather than Menu. It uses the bundled archive and production import pipeline. UI checks cover its absence outside Demo Mode and in Menu, imported relationships and sample-retention isolation.

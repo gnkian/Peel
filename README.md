@@ -169,9 +169,8 @@ No Instagram account or personal data export is required.
 
 1. Open Peel.
 2. Hold the Peel logo for five seconds.
-3. Navigate to **Menu → Your Data**.
-4. Select **Import Sample Archive**.
-5. Explore the sample relationships and review functionality.
+3. Select **Import Sample Archive** on **Review**.
+4. Explore the sample relationships and review functionality.
 
 The bundled archive contains 50 sample accounts with fictional relationships and timestamps:
 

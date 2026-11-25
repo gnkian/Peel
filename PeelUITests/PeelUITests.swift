@@ -105,7 +105,7 @@ final class PeelUITests: XCTestCase {
         // Inspect only; never open Instagram or perform account actions.
     }
 
-    func testSampleArchiveMenuAndImportedRelationships() {
+    func testSampleArchiveReviewAndImportedRelationships() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
@@ -124,6 +124,8 @@ final class PeelUITests: XCTestCase {
         logo.press(forDuration: 5.2)
         XCTAssertTrue(app.buttons["Exit Demo"].waitForExistence(timeout: 5))
         select("Menu")
+        XCTAssertFalse(app.buttons["importSampleArchive"].exists)
+        select("Review")
         let sample = app.buttons["importSampleArchive"]
         XCTAssertTrue(sample.waitForExistence(timeout: 5))
         sample.tap()
@@ -188,7 +190,6 @@ final class PeelUITests: XCTestCase {
         XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
         XCTAssertTrue(app.staticTexts["20"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["demoLogo"].press(forDuration: 5.2)
-        select("Menu")
         app.buttons["importSampleArchive"].tap()
         select("Mutual")
         XCTAssertTrue(app.staticTexts["0 of 15 reviewed"].waitForExistence(timeout: 10))

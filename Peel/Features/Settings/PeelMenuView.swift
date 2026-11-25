@@ -18,13 +18,6 @@ struct PeelMenuView: View {
         NavigationStack {
             Form {
                 Section("Your Data") {
-                    if model.isDemo {
-                        Button { model.importSampleArchive() } label: {
-                            Label("Import Sample Archive", systemImage: "doc.zipper")
-                        }
-                        .disabled(model.operationState.isRunning)
-                        .accessibilityIdentifier("importSampleArchive")
-                    }
                     Button { showExportGuide = true } label: { Label("Save Progress", systemImage: "square.and.arrow.up") }
                     Button { if model.requireLiveMode() { importRequest = .backup } } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
                     NavigationLink { resetDataView } label: {
