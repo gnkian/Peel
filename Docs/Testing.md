@@ -89,3 +89,13 @@ Profile photos retry automatically while their rows remain on screen, including 
 Hosted SwiftUI regression checks exercise retained rows during trimming and retry expiry without manually starting replacement requests. Additional checks cover shared-request cancellation, cache eviction, duplicate prevention and bounded retries.
 
 For a device check, trim while photos are loading, keep the remaining rows visible and confirm recovery. Capture the `AvatarTiming` logging category in Xcode or Console to distinguish `queue`, `profileHTML` and `image` durations. These measurements contain no usernames, URLs or response bodies. Controlled simulator delays verify the measurement boundaries; they do not establish live Instagram latency. The four-operation limit and 150-image shared cache policy remain unchanged.
+
+### Saved profile photos
+
+Downloaded thumbnails are stored in the app’s private cache directory, outside the Files document-sharing area and excluded from backups. The photo cache has a 32 MiB limit; iOS may also purge it. Saved photos are reused without network requests, including during Instagram cooldowns. Photos can remain unchanged until the cache is cleared or iOS removes them.
+
+Menu → Your Data → Reset Data → Clear Cache displays the saved thumbnail size. Confirming removal clears memory and saved thumbnails. Peel rebuilds the photo library as accounts are viewed; this requires internet access. Cancel leaves the cache intact. Imported lists, exclusions, login sessions and review progress are unaffected, and photos remain excluded from JSON backups.
+
+Regression checks cover persistence across store recreation, memory-to-disk saving, exact file-byte accounting, cache capacity, corruption, failed writes/removal, and clearing during an active download. Native UI coverage checks both Cancel and confirmed clearing.
+
+Reset Data groups Reset Lists, Log Out of Instagram and Clear Cache. The session row is last: Log Out of Instagram when logged in, and Login to Instagram when logged out, including after sign-out completes. Login opens the same native login guide used by the orange Review button; cancelling it leaves the session unchanged. UI coverage checks the grouped navigation, the concise cache confirmation and both logout states.

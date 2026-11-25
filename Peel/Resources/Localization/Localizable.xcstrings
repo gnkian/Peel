@@ -143,10 +143,25 @@
     "By Ian Gnk" : {
 
     },
+    "Calculating…" : {
+
+    },
     "Cancel" : {
 
     },
     "Choose Another File" : {
+
+    },
+    "Clear Cache" : {
+
+    },
+    "Clear profile photo cache?" : {
+
+    },
+    "Clearing Cache…" : {
+
+    },
+    "Clearing the cache will require Peel to reindex the profile photo library." : {
 
     },
     "Clears Instagram and related Meta website sessions in Peel. Imported lists and review progress remain saved." : {
@@ -168,6 +183,9 @@
 
     },
     "Could Not Keep Sample Lists" : {
+
+    },
+    "Could Not Update Photo Cache" : {
 
     },
     "Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected." : {
@@ -432,6 +450,9 @@
     "Photo Requests Paused" : {
 
     },
+    "Please try again. Your imported lists, exclusions, and review progress have not changed." : {
+
+    },
     "Press and hold for 5 seconds, or use the Toggle Demo Mode accessibility action" : {
 
     },
@@ -457,6 +478,9 @@
 
     },
     "Reset and logout" : {
+
+    },
+    "Reset Data" : {
 
     },
     "Reset imported lists?" : {

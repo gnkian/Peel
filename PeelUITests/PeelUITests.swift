@@ -363,6 +363,99 @@ final class PeelUITests: XCTestCase {
         capture("Aligned one and two digit account numbers", app: app)
     }
 
+    func testPhotoCacheClearRequiresConfirmationAndCanBeCancelled() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        app.launch()
+        XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
+        let menu = app.tabBars.buttons["Menu"].exists ? app.tabBars.buttons["Menu"] : app.buttons["Menu"].firstMatch
+        menu.tap()
+        XCTAssertFalse(app.buttons["Reset Lists"].exists)
+        app.buttons["Reset Data"].tap()
+        XCTAssertTrue(app.navigationBars["Reset Data"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Reset Lists"].exists)
+        let session = app.buttons["instagramSessionAction"]
+        XCTAssertEqual(session.label, "Login to Instagram")
+        XCTAssertTrue(session.isEnabled)
+        XCTAssertGreaterThan(session.frame.minY, app.buttons["clearPhotoCache"].frame.minY)
+        let cache = app.buttons["clearPhotoCache"]
+        for _ in 0..<5 {
+            if cache.exists && cache.isHittable { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(cache.waitForExistence(timeout: 10))
+        let calculated = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.staticTexts["Calculating…"])
+        XCTAssertEqual(XCTWaiter.wait(for: [calculated], timeout: 10), .completed)
+        let initialLabel = cache.label
+        cache.tap()
+        let explanation = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Clearing the cache will require Peel")).firstMatch
+        XCTAssertTrue(explanation.waitForExistence(timeout: 5))
+        XCTAssertEqual(explanation.label, "Clearing the cache will require Peel to reindex the profile photo library.")
+        app.buttons["Cancel"].tap()
+        XCTAssertFalse(explanation.exists)
+        XCTAssertEqual(cache.label, initialLabel)
+        cache.tap()
+        XCTAssertTrue(explanation.waitForExistence(timeout: 5))
+        app.buttons["Clear Cache"].tap()
+        XCTAssertFalse(explanation.exists)
+        XCTAssertTrue(cache.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.alerts["Could Not Update Photo Cache"].exists)
+        capture("Photo cache cleared after confirmation", app: app)
+    }
+
+    func testLogoutBecomesWorkingLoginAfterSigningOut() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        app.launchArguments += ["-peel-instagram-login-confirmed", "YES"]
+        app.launch()
+        XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
+        let menu = app.tabBars.buttons["Menu"].exists ? app.tabBars.buttons["Menu"] : app.buttons["Menu"].firstMatch
+        menu.tap()
+        app.buttons["Reset Data"].tap()
+        let logout = app.buttons["instagramSessionAction"]
+        XCTAssertTrue(logout.waitForExistence(timeout: 5))
+        XCTAssertTrue(logout.isEnabled)
+        logout.tap()
+        app.buttons["Log Out"].tap()
+        let login = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == true AND enabled == true AND label == %@", "Login to Instagram"), object: logout)
+        XCTAssertEqual(XCTWaiter.wait(for: [login], timeout: 15), .completed)
+        XCTAssertEqual(logout.label, "Login to Instagram")
+        XCTAssertGreaterThan(logout.frame.minY, app.buttons["clearPhotoCache"].frame.minY)
+        logout.tap()
+        XCTAssertTrue(app.navigationBars["Sign in to Instagram"].waitForExistence(timeout: 10))
+        app.buttons["Close"].tap()
+        XCTAssertTrue(app.navigationBars["Reset Data"].waitForExistence(timeout: 5))
+        XCTAssertEqual(logout.label, "Login to Instagram")
+        capture("Login available after signing out", app: app)
+    }
+
+    func testResetDataLoginUsesTheReviewLoginGuideAndCanBeClosed() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        app.launch()
+        let reviewLogin = app.buttons["Login to Instagram"]
+        XCTAssertTrue(reviewLogin.waitForExistence(timeout: 15))
+        reviewLogin.tap()
+        XCTAssertTrue(app.navigationBars["Sign in to Instagram"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Login complete"].exists)
+        app.buttons["Close"].tap()
+        let menu = app.tabBars.buttons["Menu"].exists ? app.tabBars.buttons["Menu"] : app.buttons["Menu"].firstMatch
+        menu.tap()
+        app.buttons["Reset Data"].tap()
+        let session = app.buttons["instagramSessionAction"]
+        XCTAssertEqual(session.label, "Login to Instagram")
+        XCTAssertTrue(session.isEnabled)
+        session.tap()
+        XCTAssertTrue(app.navigationBars["Sign in to Instagram"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Login complete"].exists)
+        app.buttons["Close"].tap()
+        XCTAssertTrue(app.navigationBars["Reset Data"].waitForExistence(timeout: 5))
+        XCTAssertEqual(session.label, "Login to Instagram")
+    }
+
     private func capture(_ name: String, app: XCUIApplication) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name

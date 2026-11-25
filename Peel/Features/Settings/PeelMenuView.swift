@@ -9,6 +9,11 @@ struct PeelMenuView: View {
     @State private var showExportGuide = false
     @State private var showLogoutConfirmation = false
     @State private var loggingOut = false
+    @State private var showingLogin = false
+    @ObservedObject private var avatarStore = InstagramAvatarStore.shared
+    @State private var showClearCache = false
+    @State private var showCacheError = false
+    @State private var cacheSizeAvailable = false
     var body: some View {
         NavigationStack {
             Form {
@@ -22,11 +27,9 @@ struct PeelMenuView: View {
                     }
                     Button { showExportGuide = true } label: { Label("Save Progress", systemImage: "square.and.arrow.up") }
                     Button { if model.requireLiveMode() { importRequest = .backup } } label: { Label("Restore Progress", systemImage: "square.and.arrow.down") }
-                    Button(role: .destructive) { showClear = true } label: { Label("Reset Lists", systemImage: "trash") }
-                    Button(role: .destructive) { if model.requireLiveMode() { showLogoutConfirmation = true } } label: {
-                        Label(loggingOut ? LocalizedStringResource("Signing out…") : LocalizedStringResource("Log Out of Instagram"), systemImage: "rectangle.portrait.and.arrow.right")
+                    NavigationLink { resetDataView } label: {
+                        Label("Reset Data", systemImage: "arrow.counterclockwise")
                     }
-                    .disabled(loggingOut)
                 }
                 Section("Information") {
                     NavigationLink { HowPeelWorksView() } label: {
@@ -107,25 +110,95 @@ struct PeelMenuView: View {
                     .id(file)
                 }
             }
-            .confirmationDialog("Log out of Instagram?", isPresented: $showLogoutConfirmation) {
-                Button("Log Out", role: .destructive) {
-                    guard !model.isDemo else { return }
-                    loggingOut = true
-                    Task {
-                        await model.signOut()
-                        loggingOut = false
-                    }
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Clears Instagram and related Meta website sessions in Peel. Imported lists and review progress remain saved.")
-            }
-            .alert("Reset imported lists?", isPresented: $showClear) {
-                Button("Reset Lists", role: .destructive) { model.resetLists() }
-                Button("Cancel", role: .cancel) {}
-            } message: { Text("Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected.") }
+
         }
         .operationFeedback(model: model, enabled: !showExportGuide, chooseRestore: model.isDemo ? nil : { importRequest = .backup })
         .tint(.primary)
+    }
+
+    private var resetDataView: some View {
+        Form {
+            Button(role: .destructive) { showClear = true } label: {
+                Label("Reset Lists", systemImage: "trash")
+            }
+
+            Button(role: .destructive) { showClearCache = true } label: {
+                HStack {
+                    Label(avatarStore.isClearingCache ? LocalizedStringResource("Clearing Cache…") : LocalizedStringResource("Clear Cache"), systemImage: "photo")
+                    Spacer()
+                    if cacheSizeAvailable {
+                        Text(avatarStore.cacheBytes, format: .byteCount(style: .file))
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("Calculating…").foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .disabled(avatarStore.isClearingCache)
+            .accessibilityIdentifier("clearPhotoCache")
+            Button(role: model.instagramLoginConfirmed ? .destructive : nil) {
+                guard model.requireLiveMode() else { return }
+                if model.instagramLoginConfirmed { showLogoutConfirmation = true }
+                else { showingLogin = true }
+            } label: {
+                Label(
+                    loggingOut ? LocalizedStringResource("Signing out…") :
+                        model.instagramLoginConfirmed ? LocalizedStringResource("Log Out of Instagram") : LocalizedStringResource("Login to Instagram"),
+                    systemImage: "rectangle.portrait.and.arrow.right"
+                )
+            }
+            .disabled(loggingOut)
+            .accessibilityIdentifier("instagramSessionAction")
+        }
+        .scrollContentBackground(.hidden)
+        .background(bg.ignoresSafeArea())
+        .navigationTitle("Reset Data")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingLogin) {
+            InstagramLoginGuide().environmentObject(model)
+        }
+        .alert("Clear profile photo cache?", isPresented: $showClearCache) {
+            Button("Clear Cache", role: .destructive) {
+                Task {
+                    do {
+                        try await avatarStore.clearCache()
+                        cacheSizeAvailable = true
+                    } catch { showCacheError = true }
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Clearing the cache will require Peel to reindex the profile photo library.")
+        }
+        .alert("Could Not Update Photo Cache", isPresented: $showCacheError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Please try again. Your imported lists, exclusions, and review progress have not changed.")
+        }
+        .task {
+            do {
+                try await avatarStore.refreshCacheSize()
+                cacheSizeAvailable = true
+            } catch { showCacheError = true }
+        }
+        .confirmationDialog("Log out of Instagram?", isPresented: $showLogoutConfirmation) {
+            Button("Log Out", role: .destructive) {
+                guard !model.isDemo, model.instagramLoginConfirmed else { return }
+                loggingOut = true
+                Task {
+                    await model.signOut()
+                    loggingOut = false
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Clears Instagram and related Meta website sessions in Peel. Imported lists and review progress remain saved.")
+        }
+        .alert("Reset imported lists?", isPresented: $showClear) {
+            Button("Reset Lists", role: .destructive) { model.resetLists() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Deletes imported lists, exclusions, and review progress. Your Instagram login stays connected.")
+        }
     }
 }

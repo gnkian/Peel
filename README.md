@@ -73,6 +73,7 @@ Users remain responsible for their account activity.
 - Search, sorting, filtering and exclusions. Excluded accounts are skipped in all three review tabs and remain accessible through the All and Excluded filters.
 - Guided manual profile review.
 - Persistent review progress.
+- Private profile-photo caching, with storage size and confirmed clearing in Menu → Reset Data.
 - JSON backup and restoration.
 - Isolated Demo Mode with sample data.
 - Native iPhone and iPad layouts.
