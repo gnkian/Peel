@@ -423,6 +423,12 @@
     "People who follow you, but you don't follow back" : {
 
     },
+    "Photo requests can resume after %@. Keep this list open to retry automatically." : {
+      "comment" : "The variable is the local time when a profile photo retry becomes available."
+    },
+    "Photo Requests Paused" : {
+
+    },
     "Press and hold for 5 seconds, or use the Toggle Demo Mode accessibility action" : {
 
     },

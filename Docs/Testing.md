@@ -81,3 +81,11 @@ Exclusions skip Remaining lists and automatic review traversal in Unfollowers, F
 Row-layout checks compare username positions across tabs and one- and two-digit row numbers, including accessibility text sizes. The shared number column retains its width after queue trimming and filtering.
 
 Verification on 25 November 2026: focused exclusion and alignment unit tests and both normal-size and accessibility-size review-list UI tests passed. Exclusions and alignment were also confirmed by manual device testing.
+
+### Profile-photo recovery
+
+Profile photos retry automatically while their rows remain on screen, including after queue trimming, temporary connection failures and server cooldowns. Retry Photo explains when requests can resume. Automatic recovery stops after three consecutive failed attempts; an explicit retry allows another bounded attempt cycle. Displayed thumbnails remain visible when the shared cache evicts their entries. Fictional Demo Mode usernames and network-disabled rows never make photo requests.
+
+Hosted SwiftUI regression checks exercise retained rows during trimming and retry expiry without manually starting replacement requests. Additional checks cover shared-request cancellation, cache eviction, duplicate prevention and bounded retries.
+
+For a device check, trim while photos are loading, keep the remaining rows visible and confirm recovery. Capture the `AvatarTiming` logging category in Xcode or Console to distinguish `queue`, `profileHTML` and `image` durations. These measurements contain no usernames, URLs or response bodies. Controlled simulator delays verify the measurement boundaries; they do not establish live Instagram latency. The four-operation limit and 150-image shared cache policy remain unchanged.

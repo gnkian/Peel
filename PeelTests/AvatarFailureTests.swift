@@ -26,9 +26,11 @@ struct AvatarFailureTests {
 
     @Test func offlineAvatarCanBeRetriedWithoutRelaunch() async throws {
         let mock = MockHTTPClient([.failure(.offline)])
-        let store = InstagramAvatarStore(client: mock)
+        var now = Date()
+        let store = InstagramAvatarStore(client: mock, now: { now })
         await store.load("peel_a")
         #expect(store.failures["peel_a"] == .offline)
+        now.addTimeInterval(10)
         await mock.append([.data(page), .data(try png())])
         await store.retry("peel_a")
         #expect(store.image(for: "peel_a") != nil)
@@ -103,4 +105,52 @@ struct AvatarFailureTests {
         }
         #expect(await mock.requests == 4)
     }
+    @Test func trimmingAndCancellingOneAvatarConsumerKeepsAnotherConsumerLoading() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let model = try await fixture.restoredModel()
+        model.followingNames = ["removed", "kept"]
+        model.compare()
+        let mock = MockHTTPClient([.data(page), .data(try png())], holdingReplies: true)
+        let store = InstagramAvatarStore(client: mock)
+        let original = Task { await store.load("kept") }
+        await mock.waitForRequests(1)
+        var replacementStarted = false
+        let replacement = Task {
+            replacementStarted = true
+            await store.load("kept")
+        }
+        let deadline = ContinuousClock.now.advanced(by: .seconds(3))
+        while !replacementStarted, ContinuousClock.now < deadline {
+            await Task.yield()
+        }
+        try #require(replacementStarted)
+        model.start(at: "kept")
+        original.cancel() // SwiftUI cancels a disappearing row's task during list changes.
+        await mock.resumeReplies()
+        await original.value
+        await replacement.value
+        #expect(model.queue.users == ["kept"])
+        #expect(store.image(for: "kept") != nil)
+        #expect(store.failures["kept"] == nil)
+        #expect(await mock.requests == 2)
+    }
+
+    @Test func cancellingAllConsumersLeavesNoFailureAndAllowsFreshLoad() async throws {
+        let mock = MockHTTPClient([], holdingReplies: true)
+        let store = InstagramAvatarStore(client: mock)
+        let load = Task { await store.load("kept") }
+        await mock.waitForRequests(1)
+        load.cancel()
+        await mock.resumeReplies()
+        await load.value
+        #expect(store.image(for: "kept") == nil)
+        #expect(store.failures["kept"] == nil)
+        let before = await mock.requests
+        await mock.append([.data(page), .data(try png())])
+        await store.load("kept")
+        #expect(store.image(for: "kept") != nil)
+        #expect(await mock.requests == before + 2)
+    }
+
 }
