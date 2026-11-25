@@ -92,6 +92,12 @@ Download the latest IPA
   <a href="https://github.com/gnkian/Peel/releases/latest"><img src="https://img.shields.io/badge/Download-IPA-F97316?style=for-the-badge&logo=apple&logoColor=white" alt="Download IPA" /></a>
 </p>
 
+### Import repository to your prefered Signing Tool
+
+```text
+https://raw.githubusercontent.com/gnkian/Peel/main/altstore.json
+```
+
 ### Free Sideloading (Requires refreshing every 7 days)
 Computer Installation (Easiest)
 

@@ -1,0 +1,81 @@
+{
+  "name": "Peel",
+  "identifier": "org.iangnk.peel.source",
+  "subtitle": "Review Instagram relationships on your device.",
+  "description": "The official Peel Altsource for compatible sideloading tools. Peel is a free, open-source iPhone and iPad app for reviewing imported Instagram follower relationships.",
+  "iconURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/peel-logo.png",
+  "website": "https://github.com/gnkian/Peel",
+  "sourceURL": "https://raw.githubusercontent.com/gnkian/Peel/main/altstore.json",
+  "tintColor": "#F97316",
+  "apps": [
+    {
+      "name": "Peel",
+      "bundleIdentifier": "org.iangnk.peel",
+      "developerName": "Ian Gnk",
+      "subtitle": "Your Instagram review space.",
+      "localizedDescription": "Compare followers and following from an Instagram export, review mutual and non-mutual connections, and keep review progress on your device.\n\nPeel supports search, sorting, exclusions, JSON backups and private profile-photo caching. Demo Mode includes a bundled sample archive with fictional relationships.\n\nFollow and unfollow decisions are performed manually on Instagram. Peel does not automate account actions. Instagram browsing and uncached profile photos require internet access.",
+      "iconURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/peel-logo.png",
+      "tintColor": "#F97316",
+      "category": "utilities",
+      "screenshots": {
+        "iphone": [
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/review.png",
+            "width": 1450,
+            "height": 2936
+          },
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/unfollowers.png",
+            "width": 1450,
+            "height": 2936
+          },
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/followers.png",
+            "width": 1450,
+            "height": 2936
+          },
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/mutual.png",
+            "width": 1450,
+            "height": 2936
+          },
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/menu.png",
+            "width": 1450,
+            "height": 2936
+          },
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/peel-data.png",
+            "width": 1450,
+            "height": 2936
+          }
+        ],
+        "ipad": [
+          {
+            "imageURL": "https://raw.githubusercontent.com/gnkian/Peel/main/Docs/assets/ipad.png",
+            "width": 2610,
+            "height": 1890
+          }
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0.2",
+          "buildVersion": "3",
+          "date": "2026-11-25",
+          "localizedDescription": "Improved exclusions, account-row alignment, profile-photo recovery and private caching. Added Reset Data controls, native login confirmations, the About version display, startup release notifications and a manual Check for Updates option. Sample archive import now appears on Review in Demo Mode.",
+          "downloadURL": "https://github.com/gnkian/Peel/releases/download/v1.0.2/Peel-1.0.2.ipa",
+          "size": 3886754,
+          "minOSVersion": "17.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [
+          "get-task-allow"
+        ],
+        "privacy": {}
+      }
+    }
+  ],
+  "news": []
+}
