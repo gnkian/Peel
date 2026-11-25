@@ -156,7 +156,7 @@ struct UnfollowDetailView: View {
                         AccountReviewRow(
                             username: user, index: index + 1,
                             status: model.excluded.contains(user) ? "Excluded" : model.doneSet.contains(user) ? "Reviewed" : "Awaiting review",
-                            actionTitle: "Unfollow", enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: !model.isDemo,
+                            actionTitle: "Unfollow", enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: true,
                             excluded: model.excluded.contains(user),
                             open: { model.openInBrowser(user) },
                             toggleExclusion: { model.toggleExclude(user) },

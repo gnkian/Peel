@@ -67,7 +67,7 @@ struct AvatarFailureTests {
         #expect(store.image(for: "apple") != nil)
     }
 
-    @Test func demoNeverRequestsAvatars() async {
+    @Test func fictionalDemoUsernamesNeverRequestAvatars() async {
         let mock = MockHTTPClient([])
         let store = InstagramAvatarStore(client: mock)
         await store.load("peeldemo_follower1")

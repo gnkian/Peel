@@ -87,17 +87,9 @@ struct InstagramAvatar: View {
     func load() async { await store.load(username, allowsNetwork: allowsNetwork) }
     func retry() async { await store.retry(username, allowsNetwork: allowsNetwork) }
 
-    var bundledImage: UIImage? {
-        guard !allowsNetwork, UsernameParser.valid(username) else { return nil }
-        return UIImage(named: "DemoAvatar_" + username.lowercased())
-    }
-
     var body: some View {
         Group {
-            if let image = bundledImage {
-                Image(uiImage: image).resizable().scaledToFit()
-                    .padding(5).background(.white)
-            } else if !allowsNetwork || username.hasPrefix("peeldemo_") {
+            if !allowsNetwork || username.hasPrefix("peeldemo_") {
                 Image(systemName: "person.crop.circle.fill")
                     .resizable().scaledToFit()
                     .foregroundStyle(.secondary)

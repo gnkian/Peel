@@ -159,7 +159,7 @@ struct RelationshipListView: View {
     private func accountRow(index: Int, user: String) -> some View {
         AccountReviewRow(
             username: user, index: index + 1, actionTitle: "Open",
-            enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: !model.isDemo, excluded: model.excluded.contains(user),
+            enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: true, excluded: model.excluded.contains(user),
             open: { model.startBrowser(mode: mode, at: user) },
             toggleExclusion: { model.toggleExclude(user) }
         )

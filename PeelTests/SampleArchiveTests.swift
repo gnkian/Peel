@@ -28,27 +28,31 @@ struct SampleArchiveTests {
         #expect(Set(["apple", "google", "meta", "microsoft", "nvidia", "openai", "github", "adobe", "spotify", "figma"]).isSubset(of: following.union(followers)))
     }
 
-    @Test func sampleAvatarDisplayAndRetryRemainOffline() async throws {
+    @Test func sampleAvatarsUseTheNormalProfilePhotoLoader() async throws {
         let fixture = try ModelFixture()
         defer { fixture.cleanUp() }
         let demo = PeelModel(demo: true, defaults: fixture.defaults)
         await demo.importSampleArchive().value
         try #require(demo.failure == nil)
-        let mock = MockHTTPClient([])
-        let store = InstagramAvatarStore(client: mock)
+        let page = Data(#"<meta property="og:image" content="https://cdninstagram.com/fixture.png">"#.utf8)
+        let png = try #require(Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aWQAAAABJRU5ErkJggg=="))
         let names = Set(demo.followingNames + demo.followerNames)
         #expect(names.count == 50)
+        let replies: [MockHTTPClient.Reply] = names.flatMap { _ in [.data(page), .data(png)] }
+        let mock = MockHTTPClient(replies)
+        let store = InstagramAvatarStore(client: mock)
         for username in names {
-            // Exercise the same loading and retry entry points used by the avatar view.
-            let avatar = InstagramAvatar(username: username, allowsNetwork: !demo.isDemo, store: store)
-            #expect(avatar.bundledImage != nil, "Missing bundled icon for \(username)")
-            #expect(InstagramAvatar(username: username, allowsNetwork: true, store: store).bundledImage == nil)
+            let avatar = InstagramAvatar(username: username, allowsNetwork: true, store: store)
             await avatar.load()
-            await avatar.retry()
+            #expect(store.image(for: username) != nil)
+            await avatar.retry() // Already loaded photos reuse the normal memory cache.
         }
-        #expect(await mock.requests == 0)
-        #expect(store.images.isEmpty)
+        #expect(await mock.requests == 100)
+        #expect(store.images.count == 50)
         #expect(store.failures.isEmpty)
+        let requests = await mock.recordedRequests
+        let profileURLs = Set(requests.compactMap { $0.request.url }.filter { $0.host == "www.instagram.com" })
+        #expect(profileURLs == Set(names.compactMap { InstagramEndpoints.profile($0) }))
     }
 
     @Test func sampleImportIsIsolatedAndStartsWithFreshProgress() async throws {

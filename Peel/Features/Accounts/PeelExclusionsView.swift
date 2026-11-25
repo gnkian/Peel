@@ -19,7 +19,7 @@ struct PeelExclusionsView: View {
                 Section {
                     ForEach(model.excluded.sorted(), id: \.self) { user in
                         AnyLayout(accessibilityLayout: dynamicTypeSize.isAccessibilitySize, spacing: 12) {
-                            InstagramAvatar(username: user, allowsNetwork: !model.isDemo)
+                            InstagramAvatar(username: user, allowsNetwork: true)
                             Text(verbatim: "@\(user)").fixedSize(horizontal: false, vertical: true)
                             Spacer()
                             Button("Include") { model.toggleExclude(user) }

@@ -129,7 +129,7 @@ final class PeelUITests: XCTestCase {
         sample.tap()
         select("Mutual")
         XCTAssertTrue(app.staticTexts["0 of 15 reviewed"].waitForExistence(timeout: 10))
-        capture("Bundled company icons", app: app)
+        capture("Sample relationships", app: app)
         let search = app.textFields["Search usernames"]
         search.tap()
         search.typeText("apple")
