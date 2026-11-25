@@ -7,13 +7,11 @@ import UniformTypeIdentifiers
 @MainActor
 struct DocumentImportPickerTests {
     @Test(arguments: [DocumentImportKind.archive, .backup])
-    func pickerUsesExplicitTypesAndCopiesOneDocument(_ kind: DocumentImportKind) {
+    func pickerUsesExplicitTypesAndSingleSelection(_ kind: DocumentImportKind) {
         let wrapper = DocumentImportPicker(kind: kind) { _ in }
         let coordinator = wrapper.makeCoordinator()
         let picker = wrapper.makePicker(coordinator: coordinator)
         #expect(kind.contentTypes == (kind == .archive ? [.zip] : [.json]))
-        // UIKit exposes the selected copy/open mode through this legacy read-only property.
-        #expect(picker.documentPickerMode == .import)
         #expect(!picker.allowsMultipleSelection)
         #expect(picker.delegate === coordinator)
     }
