@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct InstagramLoginGuide: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var model: PeelModel
     @StateObject private var loginState = BrowserLoadState()
@@ -20,30 +19,14 @@ struct InstagramLoginGuide: View {
                     }
                     .buttonStyle(OrangeButton())
                     .disabled(loginState.phase != .loaded || model.isDemo)
-                    .popover(isPresented: $confirmLogin, arrowEdge: .bottom) {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 14) {
-                                Text("Login complete?")
-                                    .font(.headline)
-                                Text("Confirm after signing in. Peel cannot verify Instagram login status.")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                AnyLayout(accessibilityLayout: dynamicTypeSize.isAccessibilitySize, spacing: 12) {
-                                    Button("Cancel") { confirmLogin = false }
-                                        .buttonStyle(.bordered)
-                                    Button("Continue") {
-                                        confirmLogin = false
-                                        model.instagramLoginConfirmed = true
-                                        dismiss()
-                                    }
-                                    .buttonStyle(.borderedProminent)
-                                    .tint(orange)
-                                }
-                            }
-                            .padding(18)
+                    .alert("Login complete?", isPresented: $confirmLogin) {
+                        Button("Cancel", role: .cancel) { }
+                        Button("Continue") {
+                            model.instagramLoginConfirmed = true
+                            dismiss()
                         }
-                        .frame(idealWidth: 300, maxWidth: 360, idealHeight: 240, maxHeight: 500)
-                        .presentationCompactAdaptation(.popover)
+                    } message: {
+                        Text("Confirm after signing in. Peel cannot verify Instagram login status.")
                     }
                     Text("You sign in on Instagram’s website. WebKit may retain cookies and website session data. Peel does not collect your password and cannot verify login status.")
                         .font(.caption2).foregroundStyle(.secondary)

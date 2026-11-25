@@ -174,7 +174,7 @@ struct PeelMenuView: View {
                 cacheSizeAvailable = true
             } catch { showCacheError = true }
         }
-        .confirmationDialog("Log out of Instagram?", isPresented: $showLogoutConfirmation) {
+        .alert("Log out of Instagram?", isPresented: $showLogoutConfirmation) {
             Button("Log Out", role: .destructive) {
                 guard !model.isDemo, model.instagramLoginConfirmed else { return }
                 loggingOut = true
