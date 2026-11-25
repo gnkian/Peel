@@ -19,6 +19,7 @@ Peel compares follower and following lists from Instagram data exports, helping 
 <p align="center">
   <img src="Docs/assets/mutual.png" width="250" alt="Mutual connections" />
   <img src="Docs/assets/menu.png" width="250" alt="Menu" />
+  <img src="Docs/assets/peel-data.png" width="250" alt="Reset Data settings" />
 </p>
 
 <p align="center">
