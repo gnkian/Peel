@@ -295,6 +295,74 @@ final class PeelUITests: XCTestCase {
         capture("Repeated fictional backup cancellation", app: app)
     }
 
+    func testExclusionsAndNumberColumnStayConsistentAcrossTabs() {
+        verifyExclusionsAndNumberColumn(contentSize: nil)
+    }
+
+    func testAccountRowsAtAccessibilityTextSize() {
+        verifyExclusionsAndNumberColumn(contentSize: "UICTContentSizeCategoryAccessibilityXXXL")
+    }
+
+    private func verifyExclusionsAndNumberColumn(contentSize: String?) {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchEnvironment["PEEL_UI_TEST_STORAGE_DOMAIN"] = "PeelUITests." + UUID().uuidString
+        if let contentSize { app.launchArguments += ["-UIPreferredContentSizeCategoryName", contentSize] }
+        app.launch()
+        XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
+        app.buttons["demoLogo"].press(forDuration: 5.2)
+        func select(_ title: String) {
+            let tab = app.tabBars.buttons[title]
+            (tab.exists ? tab : app.buttons[title].firstMatch).tap()
+        }
+        func reveal(_ element: XCUIElement) {
+            for _ in 0..<12 {
+                if element.exists && element.isHittable { return }
+                app.scrollViews.firstMatch.swipeUp()
+            }
+            XCTAssertTrue(element.exists && element.isHittable)
+        }
+        var previousUsernameX: CGFloat?
+        for (title, user) in [("Unfollowers", "peeldemo_unfollow8"),
+                              ("Followers", "peeldemo_follower5"),
+                              ("Mutual", "peeldemo_mutual7")] {
+            select(title)
+            let actions = app.buttons["Actions for @" + user]
+            reveal(actions)
+            let usernameX = app.staticTexts["@" + user].frame.minX
+            if let previousUsernameX { XCTAssertEqual(usernameX, previousUsernameX, accuracy: 0.5) }
+            previousUsernameX = usernameX
+            actions.tap()
+            app.buttons["Exclude Account"].tap()
+            XCTAssertFalse(app.staticTexts["@" + user].exists)
+            let filter = app.buttons["accountFilter"]
+            for _ in 0..<8 {
+                if filter.exists && filter.isHittable { break }
+                app.scrollViews.firstMatch.swipeDown()
+            }
+            filter.tap()
+            app.buttons["Excluded"].tap()
+            reveal(app.staticTexts["@" + user])
+            XCTAssertTrue(app.staticTexts["@" + user].exists)
+            capture("Excluded account recoverable in " + title, app: app)
+        }
+        select("Unfollowers")
+        let filter = app.buttons["accountFilter"]
+        for _ in 0..<8 {
+            if filter.exists && filter.isHittable { break }
+            app.scrollViews.firstMatch.swipeDown()
+        }
+        filter.tap()
+        app.buttons["All"].tap()
+        let first = app.staticTexts["@peeldemo_unfollow1"]
+        reveal(first)
+        let firstX = first.frame.minX
+        let tenth = app.staticTexts["@peeldemo_unfollow10"]
+        reveal(tenth)
+        XCTAssertEqual(tenth.frame.minX, firstX, accuracy: 0.5)
+        capture("Aligned one and two digit account numbers", app: app)
+    }
+
     private func capture(_ name: String, app: XCUIApplication) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name

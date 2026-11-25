@@ -17,7 +17,7 @@ enum AccountListFilter: CaseIterable, Identifiable {
     func includes(_ username: String, reviewed: Set<String>, excluded: Set<String>,
                   mode: ReviewMode = .unfollow) -> Bool {
         switch self {
-        case .remaining: !reviewed.contains(username) && (mode != .unfollow || !excluded.contains(username))
+        case .remaining: !reviewed.contains(username) && !excluded.contains(username)
         case .all: true
         case .reviewed: reviewed.contains(username)
         case .excluded: excluded.contains(username)

@@ -136,7 +136,7 @@ struct ModelBaselineTests {
     }
 
     @Test(arguments: [ReviewMode.unfollow, .followers, .mutual])
-    func exclusionsOnlySkipUnfollowReview(_ mode: ReviewMode) async throws {
+    func exclusionsSkipEveryReviewMode(_ mode: ReviewMode) async throws {
         let fixture = try ModelFixture()
         defer { fixture.cleanUp() }
         let model = try await fixture.restoredModel()
@@ -153,10 +153,10 @@ struct ModelBaselineTests {
             expected = ["unfollow_pending"]
         case .followers:
             users = model.reverseUsers
-            expected = ["follower_excluded", "follower_pending"]
+            expected = ["follower_pending"]
         case .mutual:
             users = model.mutualUsers
-            expected = ["mutual_excluded", "mutual_pending"]
+            expected = ["mutual_pending"]
         }
         let visible = users.filter {
             AccountListFilter.remaining.includes($0, reviewed: model.reviewed(mode), excluded: excluded, mode: mode)
@@ -185,6 +185,49 @@ struct ModelBaselineTests {
         #expect(model.nonMutualReviewed == ["peel_a"])
         #expect(model.mutualReviewed == ["peel_b"])
         #expect(model.queue.done.isEmpty)
+    }
+
+    @Test(arguments: [ReviewMode.unfollow, .followers, .mutual])
+    func exclusionsPersistWithoutRemovingImportedMembership(_ mode: ReviewMode) async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let model = try await fixture.restoredModel()
+        model.followingNames = ["unfollow", "mutual"]
+        model.followerNames = ["follower", "mutual"]
+        model.compare()
+        let user: String
+        switch mode {
+        case .unfollow: user = "unfollow"
+        case .followers: user = "follower"
+        case .mutual: user = "mutual"
+        }
+        model.toggleExclude(user)
+        #expect(model.remainingCount(mode) == 0)
+        model.startBrowser(mode: mode)
+        #expect(model.instagramUser == nil)
+        let restored = try await fixture.restoredModel()
+        #expect(restored.excluded == [user])
+        #expect(restored.followingNames == ["unfollow", "mutual"])
+        #expect(restored.followerNames == ["follower", "mutual"])
+        #expect(restored.remainingCount(mode) == 0)
+        restored.toggleExclude(user)
+        #expect(restored.remainingCount(mode) == 1)
+        restored.startBrowser(mode: mode)
+        #expect(restored.instagramUser == user)
+    }
+
+    @Test func numberColumnKeepsImportedListWidthAfterTrimming() async throws {
+        let fixture = try ModelFixture()
+        defer { fixture.cleanUp() }
+        let model = try await fixture.restoredModel()
+        model.followingNames = (1...100).map { "peel_\($0)" }
+        model.compare()
+        #expect(model.accountNumberColumnCount == 100)
+        model.start(at: "peel_99")
+        #expect(model.queue.users == ["peel_99", "peel_100"])
+        #expect(model.accountNumberColumnCount == 100)
+        model.toggleExclude("peel_99")
+        #expect(model.accountNumberColumnCount == 100)
     }
 
     @Test func trimmingRetainsOnlyRemainingQueueMarks() async throws {

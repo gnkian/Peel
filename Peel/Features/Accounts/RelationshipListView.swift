@@ -79,6 +79,7 @@ struct RelationshipListView: View {
     private var reviewCard: some View {
         let rows = filteredUsers
         let lastUsername = rows.last?.element
+        let numberColumnCount = model.accountNumberColumnCount
         return VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 5) {
                 AnyLayout(accessibilityLayout: dynamicTypeSize.isAccessibilitySize) {
@@ -108,12 +109,12 @@ struct RelationshipListView: View {
                 .font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 17)
                 .frame(minHeight: 48)
-                .foregroundStyle(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count ? Color.white.opacity(0.42) : Color.black)
-                .background(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count ? Color.gray.opacity(0.28) : orange,
+                .foregroundStyle(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || model.remainingCount(mode) == 0 ? Color.white.opacity(0.42) : Color.black)
+                .background(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || model.remainingCount(mode) == 0 ? Color.gray.opacity(0.28) : orange,
                             in: RoundedRectangle(cornerRadius: 14))
             }
             .buttonStyle(.plain)
-            .disabled(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || reviewedCount == users.count)
+            .disabled(!model.canEditLists || !model.instagramLoginConfirmed || users.isEmpty || model.remainingCount(mode) == 0)
             Rectangle().fill(.white.opacity(0.10)).frame(height: 1)
             HStack(spacing: 9) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
@@ -128,6 +129,7 @@ struct RelationshipListView: View {
                 Picker("Remaining", selection: $filter) {
                     ForEach(AccountListFilter.allCases) { Text($0.title).tag($0) }
                 }
+                .accessibilityIdentifier("accountFilter")
                 Picker("Order", selection: $sort) {
                     ForEach(AccountListSort.allCases) { Text($0.title).tag($0) }
                 }
@@ -144,7 +146,7 @@ struct RelationshipListView: View {
             } else {
                 LazyVStack(spacing: 0) {
                     ForEach(rows, id: \.element) { index, user in
-                        accountRow(index: index, user: user)
+                        accountRow(index: index, user: user, numberColumnCount: numberColumnCount)
                         if user != lastUsername {
                             Rectangle().fill(.white.opacity(0.065)).frame(height: 1)
                         }
@@ -156,9 +158,9 @@ struct RelationshipListView: View {
         .background(panel, in: RoundedRectangle(cornerRadius: 22))
     }
 
-    private func accountRow(index: Int, user: String) -> some View {
+    private func accountRow(index: Int, user: String, numberColumnCount: Int) -> some View {
         AccountReviewRow(
-            username: user, index: index + 1, actionTitle: "Open",
+            username: user, index: index + 1, numberColumnCount: numberColumnCount, actionTitle: "Open",
             enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: true, excluded: model.excluded.contains(user),
             open: { model.startBrowser(mode: mode, at: user) },
             toggleExclusion: { model.toggleExclude(user) }
@@ -171,6 +173,7 @@ struct RelationshipListView: View {
 struct AccountReviewRow: View {
     let username: String
     var index: Int? = nil
+    var numberColumnCount = 1
     var status: LocalizedStringResource? = nil
     let actionTitle: LocalizedStringResource
     let enabled: Bool
@@ -185,7 +188,10 @@ struct AccountReviewRow: View {
         AnyLayout(accessibilityLayout: dynamicTypeSize.isAccessibilitySize, spacing: 10) {
             HStack(spacing: 10) {
                 if let index {
-                    Text(index, format: .number)
+                    // Reserve the same number-column width across all relationship tabs.
+                    Text(max(numberColumnCount, index), format: .number)
+                        .hidden()
+                        .overlay(alignment: .trailing) { Text(index, format: .number) }
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                         .accessibilityHidden(true)

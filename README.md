@@ -70,7 +70,7 @@ Users remain responsible for their account activity.
 - Instagram data export import.
 - Follower and following relationship comparison.
 - Mutual and non-mutual relationship lists.
-- Search, sorting, filtering and exclusions.
+- Search, sorting, filtering and exclusions. Excluded accounts are skipped in all three review tabs and remain accessible through the All and Excluded filters.
 - Guided manual profile review.
 - Persistent review progress.
 - JSON backup and restoration.

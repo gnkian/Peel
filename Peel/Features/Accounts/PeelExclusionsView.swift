@@ -12,7 +12,7 @@ struct PeelExclusionsView: View {
                 ContentUnavailableView(
                     "No Exclusions",
                     systemImage: "hand.raised",
-                    description: Text("Accounts you exclude from Mass Unfollow will appear here.")
+                    description: Text("Accounts you exclude from review will appear here.")
                 )
                 .listRowBackground(Color.clear)
             } else {
@@ -31,7 +31,7 @@ struct PeelExclusionsView: View {
                         }
                     }
                 } footer: {
-                    Text("Excluded accounts are skipped during Mass Unfollow.")
+                    Text("Excluded accounts are skipped during review in all relationship lists.")
                 }
             }
         }

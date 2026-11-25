@@ -136,7 +136,9 @@ struct UnfollowDetailView: View {
     }
 
     private var listPanel: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let rows = visible
+        let numberColumnCount = model.accountNumberColumnCount
+        return VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 9) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
                 TextField("Search usernames", text: $search)
@@ -148,13 +150,14 @@ struct UnfollowDetailView: View {
             .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 12))
             AnyLayout(accessibilityLayout: dynamicTypeSize.isAccessibilitySize) {
                 Picker("Filter", selection: $filter) { ForEach(AccountListFilter.allCases) { Text($0.title).tag($0) } }
+                    .accessibilityIdentifier("accountFilter")
                 Picker("Sort", selection: $sort) { ForEach(AccountListSort.allCases) { Text($0.title).tag($0) } }
             }.font(.caption)
-            Text("\(visible.count) accounts shown", comment: "Number of accounts matching the current search and filter.").font(.caption).foregroundStyle(.secondary)
+            Text("\(rows.count) accounts shown", comment: "Number of accounts matching the current search and filter.").font(.caption).foregroundStyle(.secondary)
             LazyVStack(spacing: 0) {
-                    ForEach(Array(visible.enumerated()), id: \.element) { index, user in
+                    ForEach(Array(rows.enumerated()), id: \.element) { index, user in
                         AccountReviewRow(
-                            username: user, index: index + 1,
+                            username: user, index: index + 1, numberColumnCount: numberColumnCount,
                             status: model.excluded.contains(user) ? "Excluded" : model.doneSet.contains(user) ? "Reviewed" : "Awaiting review",
                             actionTitle: "Unfollow", enabled: model.instagramLoginConfirmed, allowsAvatarNetwork: true,
                             excluded: model.excluded.contains(user),

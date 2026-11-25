@@ -122,7 +122,7 @@
     "Accounts that don't follow you back" : {
 
     },
-    "Accounts you exclude from Mass Unfollow will appear here." : {
+    "Accounts you exclude from review will appear here." : {
 
     },
     "Accounts you follow each other" : {
@@ -191,7 +191,7 @@
     "Excluded accounts" : {
 
     },
-    "Excluded accounts are skipped during Mass Unfollow." : {
+    "Excluded accounts are skipped during review in all relationship lists." : {
 
     },
     "Exclusions" : {

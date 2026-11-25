@@ -73,3 +73,11 @@ Sample-company accounts use the normal network profile-photo loader, including i
 After keeping sample lists, confirm your own Instagram login and check profile browsing on a physical device with internet access. Demo login confirmation must not transfer. Sample relationships are fictional; Peel does not automatically follow or unfollow accounts.
 
 Focused simulator verification on 25 November 2026: 49 unit tests passed across sample archives, avatar failures and request contracts, import races and persistence failures. Sample photo loading for all 50 accounts was verified through the production loader using mock HTTP responses, without live Instagram requests during the tests. Both updated sample-exit UI flows passed, including cancellation, retention, relaunch and existing-data protection, with no SwiftUI state-update warnings. Live Instagram browsing still requires a physical-device check.
+
+### Review-list regression checks
+
+Exclusions skip Remaining lists and automatic review traversal in Unfollowers, Followers and Mutual. All and Excluded filters keep imported accounts recoverable; exclusions never delete imported relationships. Regression checks cover saved exclusions, remaining counts and re-inclusion.
+
+Row-layout checks compare username positions across tabs and one- and two-digit row numbers, including accessibility text sizes. The shared number column retains its width after queue trimming and filtering.
+
+Verification on 25 November 2026: focused exclusion and alignment unit tests and both normal-size and accessibility-size review-list UI tests passed. Exclusions and alignment were also confirmed by manual device testing.

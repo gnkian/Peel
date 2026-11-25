@@ -3,8 +3,8 @@ import Testing
 @testable import Peel
 
 struct AccountListOptionsTests {
-    @Test(arguments: AccountListFilter.allCases)
-    func filtersKeepOriginalMembership(_ filter: AccountListFilter) {
+    @Test(arguments: AccountListFilter.allCases, [ReviewMode.unfollow, .followers, .mutual])
+    func filtersKeepOriginalMembership(_ filter: AccountListFilter, mode: ReviewMode) {
         let names = ["pending", "done", "excluded", "both"]
         let reviewed: Set<String> = ["done", "both"]
         let excluded: Set<String> = ["excluded", "both"]
@@ -15,7 +15,7 @@ struct AccountListOptionsTests {
         case .reviewed: expected = ["done", "both"]
         case .excluded: expected = ["excluded", "both"]
         }
-        #expect(names.filter { filter.includes($0, reviewed: reviewed, excluded: excluded) } == expected)
+        #expect(names.filter { filter.includes($0, reviewed: reviewed, excluded: excluded, mode: mode) } == expected)
     }
 
     @Test func sortingPreservesBothExistingPolicies() {

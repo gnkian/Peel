@@ -213,17 +213,20 @@ import SwiftUI
     /// Imports and restores own the list snapshot until they finish or are explicitly cancelled.
     var canEditLists: Bool { !isRestoring && !operationState.isRunning }
 
+    /// Keep number columns aligned across tabs, filters and queue trimming.
+    var accountNumberColumnCount: Int { max(queue.users.count, followingNames.count, followerNames.count) }
+
     var doneSet: Set<String> { Set(queue.done) }
     var remaining: Int {
         let done = doneSet
         return queue.users.filter { !done.contains($0) && !excluded.contains($0) }.count
     }
-    /// Exclusions skip Mass Unfollow only; relationship reviews include those accounts.
+    /// Exclusions skip automatic review traversal in every relationship list.
     func remainingCount(_ mode: ReviewMode) -> Int {
         switch mode {
         case .unfollow: remaining
-        case .followers: reverseUsers.filter { !nonMutualReviewed.contains($0) }.count
-        case .mutual: mutualUsers.filter { !mutualReviewed.contains($0) }.count
+        case .followers: reverseUsers.filter { !nonMutualReviewed.contains($0) && !excluded.contains($0) }.count
+        case .mutual: mutualUsers.filter { !mutualReviewed.contains($0) && !excluded.contains($0) }.count
         }
     }
     var reverseUsers: [String] { let following = Set(followingNames); return followerNames.filter { !following.contains($0) } }
@@ -241,7 +244,7 @@ import SwiftUI
     }
     var browserRemaining: Int {
         let done = reviewed(browserMode)
-        return browserUsers.filter { !done.contains($0) && (browserMode != .unfollow || !excluded.contains($0)) }.count
+        return browserUsers.filter { !done.contains($0) && !excluded.contains($0) }.count
     }
     var browserReviewedCount: Int {
         let done = reviewed(browserMode)
@@ -257,7 +260,7 @@ import SwiftUI
         }
         browserHistory = []; browserIndex = 0
         let done = reviewed(mode)
-        let target = user ?? browserUsers.first(where: { !done.contains($0) && (mode != .unfollow || !excluded.contains($0)) })
+        let target = user ?? browserUsers.first(where: { !done.contains($0) && !excluded.contains($0) })
         if let target { browserHistory = [target]; showBrowserUser(target) }
     }
     func showBrowserUser(_ user: String) {
@@ -289,7 +292,7 @@ import SwiftUI
             return true
         }
         let done = reviewed(browserMode)
-        guard let user = browserUsers.first(where: { !done.contains($0) && (browserMode != .unfollow || !excluded.contains($0)) }) else { return false }
+        guard let user = browserUsers.first(where: { !done.contains($0) && !excluded.contains($0) }) else { return false }
         browserHistory.append(user)
         browserIndex = browserHistory.count - 1
         showBrowserUser(user)
