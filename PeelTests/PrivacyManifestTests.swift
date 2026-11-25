@@ -8,9 +8,11 @@ struct PrivacyManifestTests {
         let data = try Data(contentsOf: url)
         let manifest = try #require(PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any])
         let apis = try #require(manifest["NSPrivacyAccessedAPITypes"] as? [[String: Any]])
-        #expect(apis.count == 1)
-        let declaration = try #require(apis.first)
+        #expect(apis.count == 2)
+        let declaration = try #require(apis.first { $0["NSPrivacyAccessedAPIType"] as? String == "NSPrivacyAccessedAPICategoryUserDefaults" })
         #expect(declaration["NSPrivacyAccessedAPIType"] as? String == "NSPrivacyAccessedAPICategoryUserDefaults")
         #expect(declaration["NSPrivacyAccessedAPITypeReasons"] as? [String] == ["CA92.1"])
+        let cacheDeclaration = try #require(apis.first { $0["NSPrivacyAccessedAPIType"] as? String == "NSPrivacyAccessedAPICategoryFileTimestamp" })
+        #expect(cacheDeclaration["NSPrivacyAccessedAPITypeReasons"] as? [String] == ["C617.1"])
     }
 }

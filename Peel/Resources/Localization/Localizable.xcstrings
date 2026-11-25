@@ -182,6 +182,9 @@
     "Done" : {
 
     },
+    "Downloaded profile thumbnails are saved in the app’s private cache to reduce repeat downloads and remain available without a connection. They are excluded from backups and are not included in exported Peel backups. iOS may remove cached photos. Use Menu → Reset Data → Clear Cache to remove them and rebuild the photo library as you browse." : {
+
+    },
     "Exclude Account" : {
 
     },
@@ -436,6 +439,9 @@
 
     },
     "Privacy & Storage" : {
+
+    },
+    "Profile photo cache" : {
 
     },
     "Progress" : {

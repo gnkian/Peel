@@ -2,9 +2,13 @@ import SwiftUI
 
 @MainActor
 final class InstagramAvatarStore: ObservableObject {
-    static let shared = InstagramAvatarStore()
+    static let shared = InstagramAvatarStore(diskCache: AvatarDiskCache())
     @Published private(set) var images: [String: UIImage] = [:]
     @Published private(set) var failures: [String: PeelError] = [:]
+    @Published private(set) var cacheBytes: Int64 = 0
+    @Published private(set) var cacheRevision = 0
+    @Published private(set) var isClearingCache = false
+    private let diskCache: AvatarDiskCache?
     private struct PendingImage {
         let id: UUID
         let task: Task<UIImage?, Error>
@@ -33,7 +37,8 @@ final class InstagramAvatarStore: ObservableObject {
          now: @escaping () -> Date = Date.init,
          sleep: @escaping (TimeInterval) async throws -> Void = { try await Task.sleep(for: .seconds($0)) },
          measurements: AvatarMeasurements = AvatarMeasurements(),
-         gate: AvatarRequestGate = AvatarRequestGate()) {
+         gate: AvatarRequestGate = AvatarRequestGate(), diskCache: AvatarDiskCache? = nil) {
+        self.diskCache = diskCache
         self.gate = gate
         self.sleep = sleep
         self.measurements = measurements
@@ -68,6 +73,7 @@ final class InstagramAvatarStore: ObservableObject {
             hasDisplayedImage = true
             receive(image)
         } else {
+            // Disk hits are available even during a server cooldown.
             await load(username)
         }
         events.continuation.yield(())
@@ -105,7 +111,7 @@ final class InstagramAvatarStore: ObservableObject {
 
     func load(_ username: String, allowsNetwork: Bool = true) async {
         guard allowsNetwork, UsernameParser.valid(username), !username.hasPrefix("peeldemo_"),
-              images[username] == nil else { return }
+              images[username] == nil, !isClearingCache else { return }
         let consumer = UUID()
         let pending: PendingImage
         if var existing = tasks[username] {
@@ -116,18 +122,26 @@ final class InstagramAvatarStore: ObservableObject {
             let loader = loader
             let gate = gate
             let measurements = measurements
+            let diskCache = diskCache
             let canRequest = { [weak self] in
                 guard let self else { return false }
-                return self.now() >= self.cooldown &&
+                return !self.isClearingCache && self.now() >= self.cooldown &&
                     self.now() >= (self.retryDates[username] ?? .distantPast)
             }
             let task = Task<UIImage?, Error> {
+                try Task.checkCancellation()
+                let generation = await diskCache?.currentGeneration()
+                if let data = await diskCache?.data(for: username), let image = UIImage(data: data) { return image }
                 try Task.checkCancellation()
                 guard canRequest() else { return nil }
                 try await measurements.measure(.queue) { try await gate.acquire() }
                 do {
                     let image = try await loader.image(username)
                     try Task.checkCancellation()
+                    if let diskCache, let generation, let data = image.pngData() {
+                        // Persistence is best-effort; a full disk must not hide a successfully loaded photo.
+                        try? await diskCache.save(data, for: username, generation: generation)
+                    }
                     await gate.release()
                     return image
                 } catch {
@@ -158,6 +172,7 @@ final class InstagramAvatarStore: ObservableObject {
                 retryDates[username] = nil
                 consecutiveFailures[username] = nil
                 for observer in observers[username]?.values ?? [:].values { observer.receive(image) }
+                await updateCacheSize()
             } catch is CancellationError {
                 recordTransportCancellation(username, requestID: requestID)
             } catch let error as URLError where error.code == .cancelled {
@@ -181,6 +196,48 @@ final class InstagramAvatarStore: ObservableObject {
             Task { @MainActor in
                 self?.releaseConsumer(consumer, username: username, requestID: requestID)
             }
+        }
+    }
+
+    /// Saves thumbnails already in memory, including any loaded before persistent caching was enabled.
+    func refreshCacheSize() async throws {
+        guard !isClearingCache, let diskCache else { return }
+        let revision = cacheRevision
+        let generation = await diskCache.currentGeneration()
+        for (username, image) in images {
+            guard !isClearingCache, cacheRevision == revision else { return }
+            if let data = image.pngData() { try await diskCache.save(data, for: username, generation: generation) }
+        }
+        let bytes = try await diskCache.byteCount(reconcile: true)
+        if !isClearingCache, revision == cacheRevision { cacheBytes = bytes }
+    }
+
+    private func updateCacheSize() async {
+        guard let diskCache else { return }
+        let revision = cacheRevision
+        if let bytes = try? await diskCache.byteCount(), !isClearingCache, revision == cacheRevision { cacheBytes = bytes }
+    }
+
+    func clearCache() async throws {
+        guard !isClearingCache else { return }
+        isClearingCache = true
+        for pending in tasks.values { pending.task.cancel() }
+        tasks.removeAll()
+        for timer in retryTasks.values { timer.cancel() }
+        retryTasks.removeAll()
+        images.removeAll()
+        order.removeAll()
+        defer {
+            isClearingCache = false
+            cacheRevision += 1
+        }
+        // Keep retry deadlines and the server cooldown; clearing storage must not bypass rate limits.
+        do {
+            try await diskCache?.clear()
+            cacheBytes = 0
+        } catch {
+            if let bytes = try? await diskCache?.byteCount() { cacheBytes = bytes }
+            throw error
         }
     }
 
@@ -222,6 +279,7 @@ final class InstagramAvatarStore: ObservableObject {
 private struct AvatarTaskIdentity: Equatable {
     let username: String
     let allowsNetwork: Bool
+    let cacheRevision: Int
 }
 
 struct InstagramAvatar: View {
@@ -271,7 +329,7 @@ struct InstagramAvatar: View {
                      comment: "The variable is the local time when a profile photo retry becomes available.")
             }
         }
-        .task(id: AvatarTaskIdentity(username: username, allowsNetwork: allowsNetwork)) {
+        .task(id: AvatarTaskIdentity(username: username, allowsNetwork: allowsNetwork, cacheRevision: store.cacheRevision)) {
             displayedImage = nil
             defer { displayedImage = nil }
             await store.observe(username, allowsNetwork: allowsNetwork) { displayedImage = $0 }

@@ -11,6 +11,7 @@
 		A00000000000000000000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000013 /* Assets.xcassets */; };
 		B12300000000000000000001 /* Peel-Sample-Archive.zip in Resources */ = {isa = PBXBuildFile; fileRef = B12300000000000000000002 /* Peel-Sample-Archive.zip */; };
 		FB3C2C3430B6464500B0BAF5 /* DocumentImportPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3C2C3330B6464500B0BAF5 /* DocumentImportPicker.swift */; };
+		FB66BB6430B72E8D007AF091 /* AvatarDiskCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB66BB6330B72E8D007AF091 /* AvatarDiskCache.swift */; };
 		FB98908430B239330043FF14 /* PeelTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908330B239330043FF14 /* PeelTheme.swift */; };
 		FB98908630B239340043FF14 /* PeelDemoMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908530B239340043FF14 /* PeelDemoMode.swift */; };
 		FB98908830B239340043FF14 /* PeelProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908730B239340043FF14 /* PeelProgressBar.swift */; };
@@ -86,6 +87,7 @@
 		A00000000000000000000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B12300000000000000000002 /* Peel-Sample-Archive.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "Peel-Sample-Archive.zip"; sourceTree = "<group>"; };
 		FB3C2C3330B6464500B0BAF5 /* DocumentImportPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentImportPicker.swift; sourceTree = "<group>"; };
+		FB66BB6330B72E8D007AF091 /* AvatarDiskCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarDiskCache.swift; sourceTree = "<group>"; };
 		FB98906330B237F70043FF14 /* PeelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB98906E30B238960043FF14 /* PeelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB98908330B239330043FF14 /* PeelTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeelTheme.swift; sourceTree = "<group>"; };
@@ -365,6 +367,7 @@
 				FB9890D430B23D900043FF14 /* SavedStateValidator.swift */,
 				FB9890D630B23D900043FF14 /* ProgressStore.swift */,
 				FB98914B30B33F5A0043FF14 /* TemporaryExportStore.swift */,
+				FB66BB6330B72E8D007AF091 /* AvatarDiskCache.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -570,6 +573,7 @@
 				FB9890E330B23F480043FF14 /* HTTPClient.swift in Sources */,
 				FB9890A030B239380043FF14 /* InstagramExportGuide.swift in Sources */,
 				FB98909E30B239380043FF14 /* InstagramExportBrowser.swift in Sources */,
+				FB66BB6430B72E8D007AF091 /* AvatarDiskCache.swift in Sources */,
 				FB98909230B239360043FF14 /* ReviewMode.swift in Sources */,
 				FB9890A430B239390043FF14 /* InstagramLoginBrowser.swift in Sources */,
 				FB9890E730B23F490043FF14 /* InstagramNavigationCoordinator.swift in Sources */,
