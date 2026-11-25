@@ -92,6 +92,7 @@ Download the latest IPA
   <a href="https://github.com/gnkian/Peel/releases/latest"><img src="https://img.shields.io/badge/Download-IPA-F97316?style=for-the-badge&logo=apple&logoColor=white" alt="Download IPA" /></a>
 </p>
 
+### Free Sideloading (Requires refreshing every 7 days)
 Computer Installation (Easiest)
 
 <p align="center">
@@ -99,10 +100,19 @@ Computer Installation (Easiest)
   <a href="https://sideloadly.io/"><img src="https://img.shields.io/badge/Install_with-Sideloadly-3478F6?style=for-the-badge" alt="Install with Sideloadly" /></a>
 </p>
 
-Don't have a computer?
+Don't have a computer? (More technical)
 
 <p align="center">
   <a href="https://sideinstaller.net/"><img src="https://img.shields.io/badge/Install_with-SideInstaller-8250DF?style=for-the-badge" alt="Install with SideInstaller" /></a>
+</p>
+
+### Premium Sideloading (Does not require refresh up to a year)
+
+Have a Certificate? 
+
+<p align="center">
+  <a href="https://flarestore.app/signer/"><img src="https://img.shields.io/badge/Sign_with-FlareStore-F97316?style=for-the-badge" alt="Sign with FlareStore" /></a>
+  <a href="https://rustsign.com/"><img src="https://img.shields.io/badge/Sign_with-RustSign-B7410E?style=for-the-badge" alt="Sign with RustSign" /></a>
 </p>
 
 ### Requirements
@@ -147,9 +157,28 @@ Use AltStore Classic rather than AltStore PAL for individual IPA installation.
 
 [SideInstaller website](https://sideinstaller.net/)
 
-### Installation limitations
+### Known free Installation limitations
 
 - Free Apple Account signing typically requires renewal every seven days.
+
+### FlareStore
+
+1. Download the Peel IPA and save it to Files.
+2. Open the [FlareStore Web Signer](https://flarestore.app/signer/).
+3. Select the Peel IPA, your `.p12` certificate and matching `.mobileprovision` profile.
+4. Enter the certificate password if required, then select **Sign Application**.
+5. Follow the signer's installation instructions on your device.
+
+### RustSign
+
+For certificates managed through RustSign:
+
+1. Download the Peel IPA and save it to Files.
+2. Open [RustSign](https://rustsign.com/) and follow its Discord link.
+3. Use `/forge` in the bot channel to open your signing dashboard.
+4. Select **Upload App** and provide the Peel IPA.
+5. Follow the bot's signing and installation instructions for your registered device.
+
 
 ## Getting started with Xcode
 
