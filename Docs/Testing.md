@@ -101,3 +101,11 @@ Regression checks cover persistence across store recreation, memory-to-disk savi
 Reset Data groups Reset Lists, Log Out of Instagram and Clear Cache. The session row is last: Log Out of Instagram when logged in, and Login to Instagram when logged out, including after sign-out completes. Login opens the same native login guide used by the orange Review button; cancelling it leaves the session unchanged. UI coverage checks the grouped navigation, the concise cache confirmation and both logout states.
 
 In Demo Mode, Import Sample Archive appears on Review rather than Menu. It uses the bundled archive and production import pipeline. UI checks cover its absence outside Demo Mode and in Menu, imported relationships and sample-retention isolation.
+
+### Release notifications
+
+Each launch checks GitHub’s latest published stable release once. A newer numeric version offers View Release and Not Now; opening the release is optional, and updates are installed manually. There is no automatic asset download or installation. An equal or older version, a draft/prerelease, malformed metadata, cancellation, an offline connection or an API error does not show a prompt or block startup. Not Now dismisses the notice for that launch; a later launch checks again.
+
+Check for Updates is the last option in Menu’s About section, below Version. Manual checks show the installed and latest release versions when no update is available, or an explicit failure message when the service cannot be reached. They can be repeated after completion and never overlap an active startup check.
+
+Isolated regression checks cover version ordering, trusted release-page links, metadata-only requests, concurrent calls, dismissal, subsequent launches, manual checks and failure handling. Existing UI tests with disposable storage skip the live GitHub request. The About version row reads the installed application version.

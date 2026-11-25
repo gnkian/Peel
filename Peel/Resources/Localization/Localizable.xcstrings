@@ -134,6 +134,9 @@
     "All" : {
 
     },
+    "At startup and when you select Check for Updates, Peel checks GitHub for a newer public release. This request does not include your Instagram account, imported lists or review progress. Peel never downloads or installs updates automatically." : {
+
+    },
     "Avatar requests" : {
 
     },
@@ -147,6 +150,12 @@
 
     },
     "Cancel" : {
+
+    },
+    "Check for Updates" : {
+
+    },
+    "Checking for Updates…" : {
 
     },
     "Choose Another File" : {
@@ -180,6 +189,9 @@
 
     },
     "Continue" : {
+
+    },
+    "Could Not Check for Updates" : {
 
     },
     "Could Not Keep Sample Lists" : {
@@ -324,6 +336,17 @@
     "Instagram website sessions" : {
 
     },
+    "Installed version: %@. Latest release: %@." : {
+      "comment" : "The first variable is the installed app version; the second is the latest published release version.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Installed version: %1$@. Latest release: %2$@."
+          }
+        }
+      }
+    },
     "It does not export Instagram passwords, photos, or login information. Keep the file private because it contains usernames." : {
 
     },
@@ -396,10 +419,16 @@
     "No matching usernames." : {
 
     },
+    "No Update Available" : {
+
+    },
     "No usernames found." : {
 
     },
     "Not a Peel progress file." : {
+
+    },
+    "Not Now" : {
 
     },
     "OK" : {
@@ -429,6 +458,9 @@
     "Peel" : {
 
     },
+    "Peel %@ is available. Open GitHub to view the release. Updates are installed manually." : {
+      "comment" : "The variable is the newer Peel release version number."
+    },
     "Peel compares imported usernames on your device. It shows accounts that don't follow you back, your followers, and mutual accounts." : {
 
     },
@@ -453,6 +485,9 @@
     "Please login to instagram first to manage your lists." : {
 
     },
+    "Please try again later." : {
+
+    },
     "Please try again. Your imported lists, exclusions, and review progress have not changed." : {
 
     },
@@ -472,6 +507,9 @@
 
     },
     "Progress could not be saved. Your last saved state has been kept. Retry before continuing." : {
+
+    },
+    "Release checks" : {
 
     },
     "Remaining" : {
@@ -631,7 +669,16 @@
     "Unfollowers" : {
 
     },
+    "Update Available" : {
+
+    },
     "Use Instagram's Accounts Center to request a Followers and following export. Instagram prepares it asynchronously. Download the ZIP and import it directly into Peel; no extraction is needed." : {
+
+    },
+    "Version" : {
+
+    },
+    "View Release" : {
 
     },
     "Working…" : {
@@ -644,6 +691,9 @@
 
     },
     "You sign in on Instagram’s website. WebKit may retain cookies and website session data. Peel does not collect your password and cannot verify login status." : {
+
+    },
+    "You’re Up to Date" : {
 
     },
     "Your accounts will appear here after comparing lists." : {

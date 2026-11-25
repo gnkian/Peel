@@ -17,6 +17,10 @@ struct PeelPrivacyView: View {
                     text: "Loading profile photos sends network requests to Instagram and its image providers. Embedded website content may also contact service providers."
                 )
                 PrivacySection(
+                    title: "Release checks",
+                    text: "At startup and when you select Check for Updates, Peel checks GitHub for a newer public release. This request does not include your Instagram account, imported lists or review progress. Peel never downloads or installs updates automatically."
+                )
+                PrivacySection(
                     title: "Profile photo cache",
                     text: "Downloaded profile thumbnails are saved in the app’s private cache to reduce repeat downloads and remain available without a connection. They are excluded from backups and are not included in exported Peel backups. iOS may remove cached photos. Use Menu → Reset Data → Clear Cache to remove them and rebuild the photo library as you browse."
                 )

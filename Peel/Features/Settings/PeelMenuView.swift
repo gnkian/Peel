@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct PeelMenuView: View {
+    @Environment(ReleaseUpdateChecker.self) private var updateChecker
+    @Environment(\.openURL) private var openURL
+    @State private var updateResult: ReleaseUpdateChecker.Result?
     @EnvironmentObject private var model: PeelModel
     @State private var importRequest: DocumentImportKind?
     @State private var guideImportRequest: DocumentImportKind?
@@ -43,12 +46,48 @@ struct PeelMenuView: View {
                     Link(destination: URL(string: "https://www.linkedin.com/in/ioannisgnk")!) {
                         Label { Text("LinkedIn") } icon: { Image("LinkedInIcon").resizable().scaledToFit().frame(width: 20, height: 20) }
                     }
+                    if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+                        LabeledContent {
+                            Text(verbatim: version)
+                        } label: {
+                            Label("Version", systemImage: "info.circle")
+                        }
+                    }
+                    Button {
+                        Task { updateResult = await updateChecker.checkManually() }
+                    } label: {
+                        Label(updateChecker.isChecking ? LocalizedStringResource("Checking for Updates…") : LocalizedStringResource("Check for Updates"),
+                              systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .disabled(updateChecker.isChecking)
+                    .accessibilityIdentifier("checkForUpdates")
                 }
             }
             .scrollContentBackground(.hidden).background(bg.ignoresSafeArea())
             
             .navigationTitle("Menu")
             .navigationBarTitleDisplayMode(.inline)
+            .alert(updateAlertTitle, isPresented: Binding(
+                get: { updateResult != nil },
+                set: { if !$0 { updateResult = nil } }
+            ), presenting: updateResult) { result in
+                if case .available(let update) = result {
+                    Button("View Release") { openURL(update.url) }
+                    Button("Not Now", role: .cancel) { }
+                } else {
+                    Button("OK", role: .cancel) { }
+                }
+            } message: { result in
+                switch result {
+                case .available(let update):
+                    Text("Peel \(update.version) is available. Open GitHub to view the release. Updates are installed manually.")
+                case .current(let installed, let latest):
+                    Text("Installed version: \(installed). Latest release: \(latest).",
+                         comment: "The first variable is the installed app version; the second is the latest published release version.")
+                case .unavailable:
+                    Text("Please try again later.")
+                }
+            }
             .sheet(isPresented: $showExportGuide) {
                 NavigationStack {
                     ScrollView {
@@ -107,6 +146,16 @@ struct PeelMenuView: View {
         }
         .operationFeedback(model: model, enabled: !showExportGuide, chooseRestore: model.isDemo ? nil : { importRequest = .backup })
         .tint(.primary)
+    }
+
+    private var updateAlertTitle: LocalizedStringResource {
+        switch updateResult {
+        case .available: return "Update Available"
+        case .current(let installed, let latest):
+            return installed == latest ? "You’re Up to Date" : "No Update Available"
+        case .unavailable: return "Could Not Check for Updates"
+        case nil: return "Check for Updates"
+        }
     }
 
     private var resetDataView: some View {

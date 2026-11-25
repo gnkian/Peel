@@ -12,6 +12,7 @@
 		B12300000000000000000001 /* Peel-Sample-Archive.zip in Resources */ = {isa = PBXBuildFile; fileRef = B12300000000000000000002 /* Peel-Sample-Archive.zip */; };
 		FB3C2C3430B6464500B0BAF5 /* DocumentImportPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3C2C3330B6464500B0BAF5 /* DocumentImportPicker.swift */; };
 		FB66BB6430B72E8D007AF091 /* AvatarDiskCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB66BB6330B72E8D007AF091 /* AvatarDiskCache.swift */; };
+		FB66BB6830B744C3007AF091 /* ReleaseUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB66BB6730B744C3007AF091 /* ReleaseUpdateChecker.swift */; };
 		FB98908430B239330043FF14 /* PeelTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908330B239330043FF14 /* PeelTheme.swift */; };
 		FB98908630B239340043FF14 /* PeelDemoMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908530B239340043FF14 /* PeelDemoMode.swift */; };
 		FB98908830B239340043FF14 /* PeelProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB98908730B239340043FF14 /* PeelProgressBar.swift */; };
@@ -88,6 +89,7 @@
 		B12300000000000000000002 /* Peel-Sample-Archive.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "Peel-Sample-Archive.zip"; sourceTree = "<group>"; };
 		FB3C2C3330B6464500B0BAF5 /* DocumentImportPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentImportPicker.swift; sourceTree = "<group>"; };
 		FB66BB6330B72E8D007AF091 /* AvatarDiskCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarDiskCache.swift; sourceTree = "<group>"; };
+		FB66BB6730B744C3007AF091 /* ReleaseUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseUpdateChecker.swift; sourceTree = "<group>"; };
 		FB98906330B237F70043FF14 /* PeelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB98906E30B238960043FF14 /* PeelUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PeelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB98908330B239330043FF14 /* PeelTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeelTheme.swift; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 				FB9890D830B23D900043FF14 /* ImportService.swift */,
 				FB9890E630B23F490043FF14 /* InstagramNavigationCoordinator.swift */,
 				FB98914930B337750043FF14 /* ZIPArchiveReader.swift */,
+				FB66BB6730B744C3007AF091 /* ReleaseUpdateChecker.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -586,6 +589,7 @@
 				FB9890E530B23F490043FF14 /* BrowserLoadState.swift in Sources */,
 				FB9890D530B23D900043FF14 /* SavedStateValidator.swift in Sources */,
 				FB9890B430B2393C0043FF14 /* PeelExclusionsView.swift in Sources */,
+				FB66BB6830B744C3007AF091 /* ReleaseUpdateChecker.swift in Sources */,
 				FB98908A30B239340043FF14 /* QueueState.swift in Sources */,
 				FB9890E130B23F480043FF14 /* InstagramEndpoints.swift in Sources */,
 				FB9890AE30B2393B0043FF14 /* ActivitySheet.swift in Sources */,
