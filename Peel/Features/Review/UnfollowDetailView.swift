@@ -53,7 +53,12 @@ struct UnfollowDetailView: View {
                     .background(Color.gray.opacity(0.28), in: RoundedRectangle(cornerRadius: 14))
             }
             .disabled(true)
-            Label("Your accounts will appear here after comparing lists.", systemImage: "person.2")
+            Label(
+                model.instagramLoginConfirmed
+                    ? LocalizedStringResource("Your accounts will appear here after comparing lists.")
+                    : LocalizedStringResource("Please login to instagram first to manage your lists."),
+                systemImage: "person.2"
+            )
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.vertical, 12)

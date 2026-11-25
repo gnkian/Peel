@@ -413,6 +413,17 @@ final class PeelUITests: XCTestCase {
         app.launchArguments += ["-peel-instagram-login-confirmed", "YES"]
         app.launch()
         XCTAssertTrue(app.buttons["demoLogo"].waitForExistence(timeout: 15))
+        func verifyListMessage(_ expected: String, absent: String) {
+            for title in ["Unfollowers", "Followers", "Mutual"] {
+                let tab = app.tabBars.buttons[title].exists ? app.tabBars.buttons[title] : app.buttons[title].firstMatch
+                tab.tap()
+                XCTAssertTrue(app.staticTexts[expected].waitForExistence(timeout: 5), title)
+                XCTAssertFalse(app.staticTexts[absent].exists, title)
+            }
+        }
+        let loggedOutMessage = "Please login to instagram first to manage your lists."
+        let comparisonMessage = "Your accounts will appear here after comparing lists."
+        verifyListMessage(comparisonMessage, absent: loggedOutMessage)
         let menu = app.tabBars.buttons["Menu"].exists ? app.tabBars.buttons["Menu"] : app.buttons["Menu"].firstMatch
         menu.tap()
         app.buttons["Reset Data"].tap()
@@ -438,6 +449,7 @@ final class PeelUITests: XCTestCase {
         app.buttons["Close"].tap()
         XCTAssertTrue(app.navigationBars["Reset Data"].waitForExistence(timeout: 5))
         XCTAssertEqual(logout.label, "Login to Instagram")
+        verifyListMessage(loggedOutMessage, absent: comparisonMessage)
         capture("Login available after signing out", app: app)
     }
 
